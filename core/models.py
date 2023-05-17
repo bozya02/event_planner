@@ -1,0 +1,91 @@
+import os
+import uuid
+
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+from django.utils.deconstruct import deconstructible
+
+
+@deconstructible
+class UniqueUploadName(object):
+    def __init__(self, path):
+        self.path = os.path.join(path, "%s%s")
+
+    def __call__(self, instance, filename):
+        ext = filename.split('.')[-1]
+        filename = "%s.%s" % (uuid.uuid4(), ext)
+        return self.path % (instance.id, filename)
+
+
+class CustomUser(AbstractUser):
+    tg_id = models.CharField(max_length=30, verbose_name='Id Телеграм')
+
+    def __str__(self):
+        return f'{self.last_name} {self.first_name}'
+
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+
+
+class Event(models.Model):
+    name = models.CharField(max_length=100, verbose_name='Название')
+    description = models.TextField(max_length=16000, blank=True, null=True, verbose_name='Описание')
+    start_date = models.DateTimeField(verbose_name='Дата')
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Мероприятие'
+        verbose_name_plural = 'Мероприятия'
+
+
+class EventUser(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, verbose_name='Мероприятие')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, verbose_name='Участник мероприятия')
+
+    def __str__(self):
+        return f'{self.event} - {self.user}'
+
+    class Meta:
+        verbose_name = 'Участник мероприятия'
+        verbose_name_plural = 'Участники мероприятий'
+
+
+class TaskState(models.Model):
+    name = models.CharField(max_length=50, verbose_name='Название')
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Статус задачи'
+        verbose_name_plural = 'Статусы задач'
+
+
+class EventTask(models.Model):
+    description = models.TextField(max_length=16000, blank=True, null=True, verbose_name='Описание')
+    event_user = models.ForeignKey(EventUser, on_delete=models.CASCADE, verbose_name='Сотрудник')
+    status = models.ForeignKey(TaskState, on_delete=models.CASCADE, verbose_name='Статус')
+
+    def __str__(self):
+        return self.description
+
+    class Meta:
+        verbose_name = 'Задача мероприятия'
+        verbose_name_plural = 'Задачи мероприятий'
+
+
+class EventTaskReport(models.Model):
+    task = models.ForeignKey(EventTask, on_delete=models.CASCADE, verbose_name='Задание')
+    photo = models.ImageField(upload_to=UniqueUploadName('images/event_task_reports/'), blank=True,
+                              verbose_name='Изображение')
+    message = models.TextField(blank=True, verbose_name='Сообщение')
+
+    def __str__(self):
+        return f'{self.task} - {self.pk}'
+
+    class Meta:
+        verbose_name = 'Отчет о задаче мероприятия'
+        verbose_name_plural = 'Отчеты о задачах мероприятий'
