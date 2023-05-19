@@ -1,9 +1,19 @@
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 from .serializers import *
 from core.models import CustomUser, Event, EventUser, TaskState, EventTask, EventTaskReport
 
 
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
+
 class CustomUserViewSet(viewsets.ModelViewSet):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
 

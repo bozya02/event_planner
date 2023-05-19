@@ -1,5 +1,18 @@
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
 from core.models import *
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Добавьте дополнительные поля пользователя в полезную нагрузку токена (необязательно)
+        token['tg_id'] = user.tg_id
+
+        return token
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
