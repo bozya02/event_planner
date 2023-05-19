@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width">
+{% comment %}    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+    <script src="{% static 'js/app.js' %}"></script>{% endcomment %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+{% comment %}{% include 'header.html' %}{% endcomment %}
+
+<main class="container">
+    {% block content %}{% endblock content %}
+</main>
+
+{% comment %}{% include 'footer.html' %}{% endcomment %}
+</body>
+</html>

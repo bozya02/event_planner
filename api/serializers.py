@@ -5,7 +5,7 @@ from core.models import *
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = '__all__'
+        fields = ['first_name', 'last_name', 'username', 'tg_id']
 
 
 class EventSerializer(serializers.ModelSerializer):

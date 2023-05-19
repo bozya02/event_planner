@@ -65,12 +65,13 @@ class TaskState(models.Model):
 
 
 class EventTask(models.Model):
+    name = models.CharField(max_length=50, verbose_name='Название')
     description = models.TextField(max_length=16000, blank=True, null=True, verbose_name='Описание')
     event_user = models.ForeignKey(EventUser, on_delete=models.CASCADE, verbose_name='Сотрудник')
     status = models.ForeignKey(TaskState, on_delete=models.CASCADE, verbose_name='Статус')
 
     def __str__(self):
-        return self.description
+        return f'{self.name} - {self.event_user}'
 
     class Meta:
         verbose_name = 'Задача мероприятия'
