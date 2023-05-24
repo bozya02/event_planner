@@ -19,14 +19,20 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 class CustomUserReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'username', 'tg_id']
+        fields = ['first_name', 'last_name', 'username', 'tg_id',]
+
+
+class CustomUserTokenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'token']
 
 
 class CustomUserWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'username', 'tg_id', 'email', 'password', 'groups', ]
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = ['first_name', 'last_name', 'username', 'tg_id', 'email', 'password', 'groups', 'token']
+        extra_kwargs = {'tg_id': {'write_only': True}, 'password': {'write_only': True}}
 
     def create(self, validated_data):
         user = CustomUser.objects.create(
@@ -47,7 +53,7 @@ class CustomUserWriteSerializer(serializers.ModelSerializer):
 
         user.save()
 
-        return user
+        return CustomUserTokenSerializer(user).data
 
     def update(self, instance, validated_data):
         password = validated_data.pop('password', None)
