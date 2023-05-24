@@ -12,10 +12,14 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 
 class CustomUserViewSet(viewsets.ModelViewSet):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [IsAuthenticated]
     queryset = CustomUser.objects.all()
-    serializer_class = CustomUserSerializer
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return CustomUserWriteSerializer
+        return CustomUserReadSerializer
 
 
 class EventViewSet(viewsets.ModelViewSet):
