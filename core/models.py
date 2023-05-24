@@ -60,6 +60,8 @@ class Event(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название')
     description = models.TextField(max_length=16000, blank=True, null=True, verbose_name='Описание')
     start_date = models.DateTimeField(verbose_name='Дата')
+    photo = models.ImageField(upload_to=UniqueUploadName('images/events/'), blank=True,
+                              verbose_name='Изображение')
 
     def __str__(self):
         return self.name

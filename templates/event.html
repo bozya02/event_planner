@@ -1,0 +1,28 @@
+<!-- event_detail.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <h1 class="mb-4">{{ event.name }}</h1>
+                <p>{{ event.description }}</p>
+                <p><strong>Start Date:</strong> {{ event.start_date }}</p>
+                <p><strong>Photo:</strong></p>
+                {% if event.photo %}
+                    <img src="{{ event.photo.url }}" alt="{{ event.name }}" class="img-fluid">
+                {% else %}
+                    <img src="{% static 'img/default_event_photo.jpg' %}" alt="{{ event.name }}" class="img-fluid">
+                {% endif %}
+
+                {% if can_edit %}
+                    <div class="mt-5">
+                        <!-- блоки кода, доступные только для редактирования -->
+                        <a href="{% url 'event_edit' event.id %}" class="btn btn-primary">Edit Event</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
