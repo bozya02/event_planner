@@ -1,5 +1,15 @@
 from django import forms
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from core.models import *
 
-class LoginForm(forms.Form):
-    username = forms.CharField(label='Имя пользователя', max_length=150)
-    password = forms.CharField(label='Пароль', widget=forms.PasswordInput)
+
+class LoginForm(AuthenticationForm):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'password']
+
+
+class RegistrationForm(UserCreationForm):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'password1', 'password2']
