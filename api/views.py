@@ -51,3 +51,8 @@ class EventTaskViewSet(viewsets.ModelViewSet):
 class EventTaskReportViewSet(viewsets.ModelViewSet):
     queryset = EventTaskReport.objects.all()
     serializer_class = EventTaskReportSerializer
+
+
+class OrganizationViewSet(viewsets.ModelViewSet):
+    queryset = Organization.objects.all()
+    serializer_class = OrganizationSerializer

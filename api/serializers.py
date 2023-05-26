@@ -19,7 +19,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 class CustomUserReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'username', 'tg_id',]
+        fields = ['first_name', 'last_name', 'username', 'tg_id', ]
 
 
 class CustomUserTokenSerializer(serializers.ModelSerializer):
@@ -31,7 +31,8 @@ class CustomUserTokenSerializer(serializers.ModelSerializer):
 class CustomUserWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'username', 'tg_id', 'email', 'password', 'groups', 'token']
+        fields = ['first_name', 'last_name', 'username', 'tg_id', 'email', 'password', 'groups', 'token',
+                  'organization']
         extra_kwargs = {'tg_id': {'write_only': True}, 'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -96,4 +97,10 @@ class EventTaskSerializer(serializers.ModelSerializer):
 class EventTaskReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = EventTaskReport
+        fields = '__all__'
+
+
+class OrganizationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Organization
         fields = '__all__'

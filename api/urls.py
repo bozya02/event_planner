@@ -7,6 +7,7 @@ from .views import CustomTokenObtainPairView
 
 router = routers.DefaultRouter()
 router.register(r'users', views.CustomUserViewSet)
+router.register(r'organizations', views.OrganizationViewSet)
 router.register(r'events', views.EventViewSet)
 router.register(r'task-states', views.TaskStateViewSet)
 router.register(r'event-tasks', views.EventTaskViewSet)
