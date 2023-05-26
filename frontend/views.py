@@ -1,4 +1,6 @@
+from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required, permission_required
 from core.models import *
 from .forms import *
 from django.contrib.auth import authenticate, login
@@ -41,6 +43,7 @@ def registration_view(request):
     return render(request, 'registration.html', {'form': form, 'organization_form': organization_form})
 
 
+@login_required
 def events_view(request):
     organization_events = Event.objects.filter(organization=request.user.organization)
     context = {
@@ -49,26 +52,45 @@ def events_view(request):
     return render(request, 'events.html', context)
 
 
+@login_required
+@permission_required('core.view_event', raise_exception=True)
 def event_view(request, event_id):
-    event = get_object_or_404(Event, pk=event_id)
-    user = request.user
-    can_edit = user.groups.filter(name__in=['Менеджер по организации мероприятия', 'Директор']).exists()
-    context = {'event': event, 'can_edit': can_edit}
-    return render(request, 'event.html', context)
+    event = get_object_or_404(Event, id=event_id)
+    form = None
 
-
-def new_event(request):
     if request.method == 'POST':
-        form = EventCreationForm(request.POST, request.FILES)
+        form = EventForm(request.POST, request.FILES, instance=event)
         if form.is_valid():
-            event = form.save(commit=False)
-            event.organization = request.user.organization
-            event.save()
-            return redirect('events')
+            form.save()
+            return redirect('event', event_id=event.id)
+    elif 'edit' in request.path and request.user.has_perm('core.change_event'):
+        form = EventForm(instance=event)
+
+    return render(request, 'event.html', {'event': event, 'form': form})
+
+
+@permission_required('core.add_event', raise_exception=True)
+@login_required
+def new_event_view(request, event_id=None):
+    if request.method == 'POST':
+        form = EventForm(request.POST, request.FILES)
+        if form.is_valid():
+            event = form.save()
+            return redirect('event', event_id=event.id)
     else:
-        form = EventCreationForm()
+        form = EventForm()
 
     return render(request, 'new_event.html', {'form': form})
 
+
+@login_required
 def reports_view(request):
     return render(request, 'reports.html')
+
+
+@login_required
+def employees_view(request):
+    organization = request.user.organization
+    employees = CustomUser.objects.filter(organization=organization)
+    context = {'employees': employees}
+    return render(request, 'employees.html', context)

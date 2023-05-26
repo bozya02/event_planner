@@ -14,7 +14,7 @@ class LoginForm(AuthenticationForm):
 class RegistrationForm(UserCreationForm):
     class Meta:
         model = CustomUser
-        fields = ['username', 'password1', 'password2']
+        fields = ['username', 'email', 'password1', 'password2']
 
 
 class OrganizationForm(forms.ModelForm):
@@ -23,7 +23,7 @@ class OrganizationForm(forms.ModelForm):
         fields = ['name', 'description']
 
 
-class EventCreationForm(forms.ModelForm):
+class EventForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = ['name', 'description', 'start_date', 'photo']
