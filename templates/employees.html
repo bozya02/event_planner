@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Список сотрудников</h1>
+    {% if employees %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Имя пользователя</th>
+                    <th>Email</th>
+                    <th>Роль</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for employee in employees %}
+                    <tr>
+                        <td>{{ employee.username }}</td>
+                        <td>{{ employee.email }}</td>
+                        <td>{{ employee.groups.first.name }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>В вашей организации нет сотрудников.</p>
+    {% endif %}
+{% endblock %}

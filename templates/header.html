@@ -3,7 +3,10 @@
         <svg class="bi me-2" width="40" height="32">
             Logo
         </svg>
-        <span class="fs-4">Events Planner</span>
+        <span class="fs-4">Events Planner
+            {% if user.is_authenticated %}
+                - {{ user.organization.name }}
+            {% endif %} </span>
     </a>
 
     <ul class="nav nav-pills">
@@ -14,6 +17,10 @@
         <li class="nav-item">
             <a href="{% url 'reports' %}"
                class="nav-link {% if current_url == 'reports' %} active{% endif %}">Отчеты</a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'employees' %}"
+               class="nav-link {% if current_url == 'employees' %} active{% endif %}">Сотрудники</a>
         </li>
         {% if user.is_authenticated %}
             <li class="nav-item">

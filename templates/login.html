@@ -6,19 +6,27 @@
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <h1 class="mt-5 mb-4">Авторизация</h1>
-                {% if error_message %}
-                    <div class="alert alert-danger" role="alert">{{ error_message }}</div>
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
                 {% endif %}
                 <form method="POST" action="{% url 'login' %}" class="mb-4">
                     {% csrf_token %}
-                    <div class="form-group">
-                        <label for="id_username">Имя пользователя:</label>
-                        {{ form.username|add_class:'form-control' }}
-                    </div>
-                    <div class="form-group">
-                        <label for="id_password">Пароль:</label>
-                        {{ form.password|add_class:'form-control' }}
-                    </div>
+                    {% for field in login_form.visible_fields %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field|add_class:'form-control' }}
+                            {% if field.help_text %}
+                                <small class="form-text text-muted">{{ field.help_text }}</small>
+                            {% endif %}
+                            {% for error in field.errors %}
+                                <div class="alert alert-danger" role="alert">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
                     <button type="submit" class="btn btn-primary">Войти</button>
                 </form>
                 <p>Еще нет аккаунта? <a href="{% url 'registration' %}">Зарегистрируйтесь</a></p>

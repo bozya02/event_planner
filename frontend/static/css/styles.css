@@ -1,0 +1,8 @@
+.event-cards {
+  display: flex;
+}
+
+.event-card-img {
+  object-fit: cover;
+  height: 400px; /* Adjust the desired height of the images */
+}
