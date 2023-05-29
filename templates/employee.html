@@ -54,12 +54,30 @@
                         <strong>Логин телеграм</strong>
                         <p>{{ employee.username }}</p>
                     </div>
-
-                    <div class="mt-5">
+                    {% if perms.core.change_customuser %}
+                        <div class="mt-5">
                             <!-- блоки кода, доступные только для редактирования -->
                             <a href="{% url 'edit_employee' employee.id %}" class="btn btn-primary">Редактировать</a>
                         </div>
+                    {% endif %}
 
+                    <div class="mt-5">
+                        <h3>Участие в мероприятиях</h3>
+                        {% if employee.eventuser_set.count > 0 %}
+                            <ul>
+                                {% for event in employee.eventuser_set.all %}
+                                    <li>
+                                            <strong>{{ event.event }}</strong> <br/>
+                                            {% if event.event.photo %}
+                                                <img width="200" src="{{ event.event.photo.url }}"/>
+                                            {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>Сотрудник не участвовал в мероприятиях</p>
+                        {% endif %}
+                    </div>
                 {% endif %}
             </div>
         </div>

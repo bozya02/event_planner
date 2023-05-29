@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                {% if form %}
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% for field in form %}
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field|add_class:'form-control' }}
+                        {% endfor %}
+                        <button type="submit" class="btn btn-primary mt-3">Сохранить</button>
+                    </form>
+                {% else %}
+                    <h2>Детали организации</h2>
+                    <p><strong>Название:</strong> {{ organization.name }}</p>
+                    <p><strong>Описание:</strong> {{ organization.description }}</p>
+                    {% if perms.core.change_organization %}
+                        <div class="mt-3">
+                            <!-- блоки кода, доступные только для редактирования -->
+                            <a href="{% url 'edit_organization' %}" class="btn btn-primary">Редактировать</a>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

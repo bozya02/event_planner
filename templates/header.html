@@ -11,6 +11,10 @@
 
     <ul class="nav nav-pills">
         <li class="nav-item">
+            <a href="{% url 'organization' %}" class="nav-link {% if current_url == 'organization' %} active{% endif %}"
+               aria-current="page">Организация</a>
+        </li>
+        <li class="nav-item">
             <a href="{% url 'events' %}" class="nav-link {% if current_url == 'events' %} active{% endif %}"
                aria-current="page">Мероприятия</a>
         </li>

@@ -150,3 +150,20 @@ def new_employee_view(request):
         form = NewEmployeeForm()
 
     return render(request, 'new_employee.html', {'form': form})
+
+
+@login_required()
+@permission_required('core.view_organization', raise_exception=True)
+def organization_view(request):
+    organization = request.user.organization
+    form = None
+    if request.method == 'POST':
+        form = OrganizationForm(request.POST, instance=organization)
+        if form.is_valid():
+            organization = form.save(commit=False)
+            organization.save()
+            return redirect('organization')
+    elif 'edit' in request.path and request.user.has_perm('core.change_organization'):
+        form = OrganizationForm(instance=organization)
+
+    return render(request, 'organization.html', {'organization': organization, 'form': form})
