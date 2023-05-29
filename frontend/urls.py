@@ -13,5 +13,7 @@ urlpatterns = [
     path('events/new/', views.new_event_view, name='new_event'),
     path('reports/', views.reports_view, name='reports'),
     path('employees/', views.employees_view, name='employees'),
+    path('employees/<int:employee_id>/', views.employee_view, name='employee'),
+    path('employees/new/', views.new_employee_view, name='new_employee'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
 ]

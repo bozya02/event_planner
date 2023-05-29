@@ -2,23 +2,28 @@
 
 {% block content %}
     <h1>Список сотрудников</h1>
+    <a href="{% url 'new_employee' %}" class="btn btn-primary">Добавить cотрудника</a>
     {% if employees %}
         <table class="table table-striped">
             <thead>
-                <tr>
-                    <th>Имя пользователя</th>
-                    <th>Email</th>
-                    <th>Роль</th>
-                </tr>
+            <tr>
+                <th>Имя пользователя</th>
+                <th>Email</th>
+                <th>Роль</th>
+            </tr>
             </thead>
             <tbody>
-                {% for employee in employees %}
-                    <tr>
-                        <td>{{ employee.username }}</td>
-                        <td>{{ employee.email }}</td>
-                        <td>{{ employee.groups.first.name }}</td>
-                    </tr>
-                {% endfor %}
+            {% for employee in employees %}
+                <tr>
+                    <td>
+                        <a href="{% url 'employee' employee.id %}" style="text-decoration: none">
+                            {{ employee.username }}
+                        </a>
+                    </td>
+                    <td>{{ employee.email }}</td>
+                    <td>{{ employee.groups.first.name }}</td>
+                </tr>
+            {% endfor %}
             </tbody>
         </table>
     {% else %}

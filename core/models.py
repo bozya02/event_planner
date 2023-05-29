@@ -23,7 +23,7 @@ class Organization(models.Model):
     description = models.TextField(blank=True, null=True, verbose_name='Описание')
 
     def __str__(self):
-        return f'{self.name}'
+        return self.name
 
     class Meta:
         verbose_name = 'Организация'

@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm
 from django.utils import timezone
 
 from core.models import *
@@ -34,3 +34,19 @@ class EventForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['start_date'].widget.attrs.update({'class': 'form-control datetimepicker'})
+
+
+class NewEmployeeForm(UserCreationForm):
+    class Meta:
+        model = CustomUser
+        fields = ['first_name', 'last_name', 'username', 'groups']
+
+
+class EmployeeForm(UserChangeForm):
+    password = None
+
+    class Meta:
+        model = CustomUser
+        fields = ['first_name', 'last_name', 'username', 'groups', 'password']
+
+

@@ -77,8 +77,8 @@ def event_view(request, event_id):
     return render(request, 'event.html', {'event': event, 'form': form})
 
 
-@permission_required('core.add_event', raise_exception=True)
 @login_required
+@permission_required('core.add_event', raise_exception=True)
 def new_event_view(request, event_id=None):
     if request.method == 'POST':
         form = EventForm(request.POST, request.FILES)
@@ -104,3 +104,48 @@ def employees_view(request):
     employees = CustomUser.objects.filter(organization=organization)
     context = {'employees': employees}
     return render(request, 'employees.html', context)
+
+
+@login_required
+@permission_required('core.view_customuser', raise_exception=True)
+def employee_view(request, employee_id):
+    employee = get_object_or_404(CustomUser, id=employee_id)
+
+    if employee.organization != request.user.organization:
+        raise PermissionDenied
+
+
+    if request.method == 'POST':
+        form = EmployeeForm(request.POST, instance=employee)
+        if form.is_valid():
+            user = form.save(commit=False)
+            groups = form.cleaned_data.get('groups')
+            user.set_password(form.data['password'])
+            user.groups.set(groups)
+            user.save()
+            return redirect('employees')
+    else:
+        form = EmployeeForm(instance=employee)
+
+    return render(request, 'employee.html', {'form': form})
+
+
+@login_required
+@permission_required('core.add_customuser', raise_exception=True)
+def new_employee_view(request):
+    if request.method == 'POST':
+        form = NewEmployeeForm(request.POST, request.FILES)
+        organization = request.user.organization
+        if form.is_valid():
+            user = form.save(commit=False)
+            groups = form.cleaned_data.get('groups')
+            user.organization = organization
+
+            user.save()
+            user.groups.set(groups)
+            user.save()
+            return redirect('employees')
+    else:
+        form = NewEmployeeForm()
+
+    return render(request, 'new_employee.html', {'form': form})
