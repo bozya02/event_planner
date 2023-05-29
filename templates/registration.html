@@ -11,7 +11,18 @@
                     {% for field in form.visible_fields %}
                         <div class="form-group">
                             <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                            {{ field|add_class:'form-control' }}
+                            {% if field.name == 'password1' or field.name == 'password2' %}
+                                <div class="input-group">
+                                    {{ field|add_class:'form-control' }}
+                                    <div class="input-group-append ms-xl-1">
+                                        <button class="btn btn-outline-info" type="button" onclick="togglePasswordVisibility({{ field.id_for_label }})">
+                                            <i class="fa fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            {% else %}
+                                {{ field|add_class:'form-control' }}
+                            {% endif %}
                             {% if field.help_text %}
                                 <small class="form-text text-muted">{{ field.help_text }}</small>
                             {% endif %}
@@ -31,7 +42,9 @@
                             {% endfor %}
                         </div>
                     {% endfor %}
-                    <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+                    </div>
                 </form>
                 <p>Уже есть аккаунт? <a href="{% url 'login' %}">Войдите</a></p>
             </div>

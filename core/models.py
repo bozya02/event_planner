@@ -22,6 +22,9 @@ class Organization(models.Model):
     name = models.CharField(max_length=100, null=True, verbose_name='Название')
     description = models.TextField(blank=True, null=True, verbose_name='Описание')
 
+    def __str__(self):
+        return f'{self.name}'
+
     class Meta:
         verbose_name = 'Организация'
         verbose_name_plural = 'Организации'
@@ -46,7 +49,7 @@ class CustomUserManager(UserManager):
 
 
 class CustomUser(AbstractUser):
-    tg_id = models.CharField(max_length=30, verbose_name='Id Телеграм')
+    tg_id = models.CharField(max_length=30, verbose_name='Id Телеграм', blank=True, null=True)
     organization = models.ForeignKey('Organization', blank=True, null=True,  on_delete=models.CASCADE, verbose_name='Организация')
     objects = CustomUserManager()
 

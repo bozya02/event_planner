@@ -18,7 +18,18 @@
                     {% for field in login_form.visible_fields %}
                         <div class="form-group">
                             <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                            {{ field|add_class:'form-control' }}
+                            {% if field.name == 'password' %}
+                                <div class="input-group">
+                                    {{ field|add_class:'form-control' }}
+                                    <div class="input-group-append ms-xl-1">
+                                        <button class="btn btn-outline-info" type="button" onclick="togglePasswordVisibility({{ field.id_for_label }})">
+                                            <i class="fa fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            {% else %}
+                                {{ field|add_class:'form-control' }}
+                            {% endif %}
                             {% if field.help_text %}
                                 <small class="form-text text-muted">{{ field.help_text }}</small>
                             {% endif %}

@@ -1,9 +1,11 @@
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from core.models import *
 from .forms import *
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import Group
 
 
 def home(request):
@@ -35,6 +37,8 @@ def registration_view(request):
             user.organization = organization
             user.save()
 
+            user.groups.add(Group.objects.get(name='Директор'))
+
             return redirect('login')
     else:
         form = RegistrationForm()
@@ -56,6 +60,10 @@ def events_view(request):
 @permission_required('core.view_event', raise_exception=True)
 def event_view(request, event_id):
     event = get_object_or_404(Event, id=event_id)
+
+    if event.organization != request.user.organization:
+        raise PermissionDenied
+
     form = None
 
     if request.method == 'POST':
@@ -75,7 +83,9 @@ def new_event_view(request, event_id=None):
     if request.method == 'POST':
         form = EventForm(request.POST, request.FILES)
         if form.is_valid():
-            event = form.save()
+            event = form.save(commit=False)
+            event.organization = request.user.organization
+            event.save()
             return redirect('event', event_id=event.id)
     else:
         form = EventForm()
