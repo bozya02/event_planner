@@ -1,0 +1,90 @@
+{% load custom_filters %}
+
+<div class="text-center">
+    <button type="button" class="btn btn-primary" onclick="openModal()">
+        Добавить сотрудника
+    </button>
+</div>
+{% if event_employees %}
+    <h3>Участники</h3>
+    <div class="list-group">
+        {% for event_employee in event_employees %}
+            {#            <button type="button"#}
+            {#                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"#}
+            {#                    data-toggle="collapse"#}
+            {#                    data-target="#tasks{{ event_employee.id }}" aria-expanded="false"#}
+            {#                    aria-controls="tasks{{ event_employee.id }}">#}
+            {#                {{ event_employee.user }}#}
+            {#                <div class="d-flex justify-content-around">#}
+            {#                    <span class="badge bg-primary badge-pill mx-1">{{ event_employee.eventtask_set.count }}</span>#}
+            {#                    {% for state in task_states %}#}
+            {#                        <span class="badge badge-pill#}
+            {#                                    {% with state.name|get_state_color as badge_class %}{{ badge_class }}{% endwith %}#}
+            {#                                    mx-1" data-toggle="tooltip" data-placement="top" title="{{ state.name }}">#}
+            {#                            {{ event_employee.eventtask_set|tasks_count:state }}#}
+            {#                        </span>#}
+            {#                    {% endfor %}#}
+            {#                </div>#}
+            {#            </button>#}
+            <li class="list-group-item">
+                <div class="d-flex justify-content-between">
+                    {{ event_employee.user }}
+                    <div class="d-flex">
+                    <span class="badge bg-primary badge-pill mx-1" data-toggle="tooltip" data-placement="top"
+                          title="Всего">{{ event_employee.eventtask_set.count }}</span>
+                        {% for state in task_states %}
+                            <span class="badge badge-pill
+                                    {% with state.name|get_state_color as badge_class %}{{ badge_class }}{% endwith %}
+                                    mx-1" data-toggle="tooltip" data-placement="top" title="{{ state.name }}">
+                            {{ event_employee.eventtask_set|tasks_count:state }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </li>
+            <div class="tasks collapse" id="tasks{{ event_employee.id }}">
+                <ul class="list-group">
+                    {% for task in event_employee.eventtask_set.all %}
+                        <li class="list-group-item">{{ task.name }} - {{ task.status }}</li>
+                    {% empty %}
+                        <li class="list-group-item">Нет задач</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    Нет участников
+{% endif %}
+
+<!-- Модальное окно для выбора сотрудника -->
+<div class="modal fade" id="selectEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="selectEmployeeModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="POST" action="{% url 'add_employees' event_id=event.id %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="selectEmployeeModalLabel">Выберите сотрудника</h5>
+                    <button type="button" class="btn close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul class="list-group">
+                        {% for employee in organization_employees %}
+                            <li class="list-group-item">
+                                <input type="checkbox" name="employees" value="{{ employee.id }}">
+                                {{ employee }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

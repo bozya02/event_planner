@@ -12,6 +12,7 @@ urlpatterns = [
     path('events/', views.events_view, name='events'),
     path('events/<int:event_id>/', views.event_view, name='event'),
     path('events/<int:event_id>/edit/', views.event_view, name='edit_event'),
+    path('event/<int:event_id>/add_employees/', views.event_view, name='add_employees'),
     path('events/new/', views.new_event_view, name='new_event'),
     path('reports/', views.reports_view, name='reports'),
     path('employees/', views.employees_view, name='employees'),

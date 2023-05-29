@@ -14,21 +14,31 @@
             <a href="{% url 'organization' %}" class="nav-link {% if current_url == 'organization' %} active{% endif %}"
                aria-current="page">Организация</a>
         </li>
-        <li class="nav-item">
-            <a href="{% url 'events' %}" class="nav-link {% if current_url == 'events' %} active{% endif %}"
-               aria-current="page">Мероприятия</a>
-        </li>
-        <li class="nav-item">
-            <a href="{% url 'reports' %}"
-               class="nav-link {% if current_url == 'reports' %} active{% endif %}">Отчеты</a>
-        </li>
-        <li class="nav-item">
-            <a href="{% url 'employees' %}"
-               class="nav-link {% if current_url == 'employees' %} active{% endif %}">Сотрудники</a>
-        </li>
+        {% if perms.core.view_event %}
+            <li class="nav-item">
+                <a href="{% url 'events' %}" class="nav-link {% if current_url == 'events' %} active{% endif %}"
+                   aria-current="page">Мероприятия</a>
+            </li>
+        {% endif %}
+        {% if perms.core.view_eventtaskreport %}
+            <li class="nav-item">
+                <a href="{% url 'reports' %}"
+                   class="nav-link {% if current_url == 'reports' %} active{% endif %}">Отчеты</a>
+            </li>
+        {% endif %}
+        {% if perms.core.view_customuser %}
+            <li class="nav-item">
+                <a href="{% url 'employees' %}"
+                   class="nav-link {% if current_url == 'employees' %} active{% endif %}">Сотрудники</a>
+            </li>
+        {% endif %}
         {% if user.is_authenticated %}
             <li class="nav-item">
                 <a href="{% url 'logout' %}" class="nav-link">Выйти</a>
+            </li>
+        {% else %}
+            <li class="nav-item mx-1">
+                <a href="{% url 'login' %}" class="nav-link {% if current_url == 'login' %} active{% endif %}">Авторизация</a>
             </li>
         {% endif %}
     </ul>

@@ -39,3 +39,8 @@ function generateRandomPassword() {
 
     return password;
 }
+
+
+function openModal() {
+    $('#selectEmployeeModal').modal('show');
+}

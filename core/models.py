@@ -50,7 +50,7 @@ class CustomUserManager(UserManager):
 
 class CustomUser(AbstractUser):
     tg_id = models.CharField(max_length=30, verbose_name='Id Телеграм', blank=True, null=True)
-    organization = models.ForeignKey('Organization', blank=True, null=True,  on_delete=models.CASCADE, verbose_name='Организация')
+    organization = models.ForeignKey(Organization, blank=True, null=True,  on_delete=models.CASCADE, verbose_name='Организация')
     objects = CustomUserManager()
 
     def __str__(self):
@@ -70,7 +70,7 @@ class CustomUser(AbstractUser):
 
 class Event(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название')
-    organization = models.ForeignKey('Organization', blank=True, null=True, on_delete=models.CASCADE, verbose_name='Организация')
+    organization = models.ForeignKey(Organization, blank=True, null=True, on_delete=models.CASCADE, verbose_name='Организация')
     description = models.TextField(max_length=16000, blank=True, null=True, verbose_name='Описание')
     start_date = models.DateTimeField(verbose_name='Дата')
     photo = models.ImageField(upload_to=UniqueUploadName('images/events/'), blank=True,
@@ -111,7 +111,7 @@ class EventTask(models.Model):
     name = models.CharField(max_length=50, verbose_name='Название')
     description = models.TextField(max_length=16000, blank=True, null=True, verbose_name='Описание')
     event_user = models.ForeignKey(EventUser, on_delete=models.CASCADE, verbose_name='Сотрудник')
-    status = models.ForeignKey(TaskState, on_delete=models.CASCADE, verbose_name='Статус')
+    state = models.ForeignKey(TaskState, on_delete=models.CASCADE, verbose_name='Статус')
 
     def __str__(self):
         return f'{self.name} - {self.event_user}'

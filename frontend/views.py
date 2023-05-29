@@ -60,6 +60,11 @@ def events_view(request):
 @permission_required('core.view_event', raise_exception=True)
 def event_view(request, event_id):
     event = get_object_or_404(Event, id=event_id)
+    event_employees = EventUser.objects.filter(event=event)
+    organization_employees = CustomUser.objects.filter(organization=request.user.organization).exclude(
+        id__in=event_employees.values_list('user__id', flat=True)
+    )
+    task_states = TaskState.objects.all()
 
     if event.organization != request.user.organization:
         raise PermissionDenied
@@ -67,14 +72,22 @@ def event_view(request, event_id):
     form = None
 
     if request.method == 'POST':
-        form = EventForm(request.POST, request.FILES, instance=event)
-        if form.is_valid():
-            form.save()
+        if 'edit' in request.path and request.user.has_perm('core.change_event'):
+            form = EventForm(request.POST, request.FILES, instance=event)
+            if form.is_valid():
+                form.save()
+                return redirect('event', event_id=event.id)
+        elif 'add_employees' in request.path:
+            employee_ids = request.POST.getlist('employees')
+            employees = CustomUser.objects.filter(id__in=employee_ids)
+            for employee in employees:
+                EventUser.objects.create(event=event, user=employee)
             return redirect('event', event_id=event.id)
     elif 'edit' in request.path and request.user.has_perm('core.change_event'):
         form = EventForm(instance=event)
 
-    return render(request, 'event.html', {'event': event, 'form': form})
+    return render(request, 'event.html', {'event': event, 'form': form, 'event_employees': event_employees,
+                                          'organization_employees': organization_employees, 'task_states': task_states})
 
 
 @login_required
