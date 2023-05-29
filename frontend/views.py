@@ -110,6 +110,7 @@ def employees_view(request):
 @permission_required('core.view_customuser', raise_exception=True)
 def employee_view(request, employee_id):
     employee = get_object_or_404(CustomUser, id=employee_id)
+    form = None
 
     if employee.organization != request.user.organization:
         raise PermissionDenied
@@ -122,13 +123,12 @@ def employee_view(request, employee_id):
             if form.cleaned_data['password_changed']:
                 user.set_password(form.data['password'])
             user.groups.set(groups)
-            print(form.cleaned_data)
             user.save()
             return redirect('employees')
-    else:
+    elif 'edit' in request.path and request.user.has_perm('core.change_customuser'):
         form = EmployeeForm(instance=employee)
 
-    return render(request, 'employee.html', {'form': form})
+    return render(request, 'employee.html', {'employee': employee, 'form': form})
 
 
 @login_required

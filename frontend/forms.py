@@ -39,7 +39,7 @@ class EventForm(forms.ModelForm):
 class NewEmployeeForm(UserCreationForm):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'username', 'groups']
+        fields = ['first_name', 'last_name', 'email', 'username', 'groups']
 
 
 class EmployeeForm(UserChangeForm):
