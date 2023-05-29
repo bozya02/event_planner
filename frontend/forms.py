@@ -48,6 +48,6 @@ class EmployeeForm(UserChangeForm):
 
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'username', 'groups', 'password', 'password_changed']
+        fields = ['first_name', 'last_name', 'email', 'username', 'groups', 'password', 'password_changed']
 
 
