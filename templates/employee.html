@@ -6,7 +6,7 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <h2>Сотрудник</h2>
-                <form method="POST" >
+                <form method="POST">
                     {% csrf_token %}
                     {% for field in form.visible_fields %}
                         {% if field.name == 'password' %}
@@ -26,10 +26,14 @@
                     {% endfor %}
                     </div>
                     {% endfor %}
+                    {{ form.password_changed }}
+
                     <div class="mt-3">
                         <button type="button" id="generate-password-btn" class="btn btn-secondary"
-                                onclick="toggleGeneratePasswordButton(this, document.getElementById('password_group'),
-                        document.getElementById(('id_password')))">Сгенерировать
+                                onclick="toggleGeneratePasswordButton(this,
+                                document.getElementById('password_group'),
+                                document.getElementById('id_password'),
+                                document.getElementById('id_password_changed'))">Сгенерировать
                             пароль
                         </button>
                         <button class="btn btn-primary" type="submit">Сохранить</button>

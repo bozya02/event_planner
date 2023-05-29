@@ -114,14 +114,15 @@ def employee_view(request, employee_id):
     if employee.organization != request.user.organization:
         raise PermissionDenied
 
-
     if request.method == 'POST':
         form = EmployeeForm(request.POST, instance=employee)
         if form.is_valid():
             user = form.save(commit=False)
             groups = form.cleaned_data.get('groups')
-            user.set_password(form.data['password'])
+            if form.cleaned_data['password_changed']:
+                user.set_password(form.data['password'])
             user.groups.set(groups)
+            print(form.cleaned_data)
             user.save()
             return redirect('employees')
     else:

@@ -19,7 +19,9 @@ function togglePasswordVisibility(passwordField) {
     }
 }
 
-function toggleGeneratePasswordButton(button, passwordGroup, passwordField) {
+function toggleGeneratePasswordButton(button, passwordGroup, passwordField, passwordChanged) {
+    console.log(passwordChanged)
+    passwordChanged.value = true
     passwordGroup.style.display = 'block';
     passwordField.style.display = 'block';
     passwordField.value = generateRandomPassword()

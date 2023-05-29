@@ -44,9 +44,10 @@ class NewEmployeeForm(UserCreationForm):
 
 class EmployeeForm(UserChangeForm):
     password = None
+    password_changed = forms.BooleanField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'username', 'groups', 'password']
+        fields = ['first_name', 'last_name', 'username', 'groups', 'password', 'password_changed']
 
 
