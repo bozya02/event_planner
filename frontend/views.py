@@ -180,3 +180,54 @@ def organization_view(request):
         form = OrganizationForm(instance=organization)
 
     return render(request, 'organization.html', {'organization': organization, 'form': form})
+
+
+@login_required
+def profile(request):
+    user = request.user
+    organization = user.organization
+    is_director = user.groups.filter(name='Директор').exists()
+    organization_form = None
+    user_form = None
+
+    if request.method == 'POST':
+        # Если пользователь является директором, обработайте данные формы информации об организации
+        if is_director:
+            organization_form = OrganizationForm(request.POST, instance=user.organization)
+            if organization_form.is_valid():
+                organization_form.save()
+                return redirect('profile')
+        else:
+            organization_form = OrganizationForm(instance=user.organization)
+        # Обработайте данные формы личных данных пользователя
+        user_form = EmployeeForm(request.POST, instance=user)
+        if user_form.is_valid():
+            if not is_director:
+                groups = user.groups.all()
+                print(groups)
+                user = user_form.save(commit=False)
+                # Сохраняем изменения пользователя
+                user.save()
+                # Обновляем группы пользователя
+                user.groups.set(groups)
+            if user_form.cleaned_data['password_changed']:
+                user.set_password(user_form.data['password'])
+
+            # Сохраняем изменения в группах
+            user.save()
+            return redirect('profile')
+    elif 'edit' in request.path:
+        if is_director:
+            organization_form = OrganizationForm(instance=organization)
+
+        initial_data = {
+            'groups': user.groups.all()  # Устанавливаем начальное значение для групп пользователя
+        }
+
+        user_form = EmployeeForm(instance=user, initial=initial_data)
+
+    return render(request, 'profile.html',
+                  {'user': user, 'user_form': user_form,
+                   'organization': organization,
+                   'organization_form': organization_form,
+                   'is_director': is_director})

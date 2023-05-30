@@ -6,3 +6,8 @@
   object-fit: cover;
   height: 400px; /* Adjust the desired height of the images */
 }
+
+.no-bullets {
+    list-style-type: none;
+    padding-left: 0;
+}
