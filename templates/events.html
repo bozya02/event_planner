@@ -11,7 +11,8 @@
                         <a href="{% url 'event' event.id %}" style="text-decoration: none">
                             <div class="card mb-4">
                                 {% if event.photo %}
-                                    <img src="{{ event.photo.url }}" alt="{{ event.name }}" class="card-img-top event-card-img">
+                                    <img src="{{ event.photo.url }}" alt="{{ event.name }}"
+                                         class="card-img-top event-card-img">
                                 {% else %}
                                     <img src="{% static 'img/default_event_photo.jpg' %}" alt="{{ event.name }}"
                                          class="card-img-top event-card-img">
@@ -29,11 +30,12 @@
                         <div class="row event-cards">
                     {% endif %}
                 {% endfor %}
-            </div>
+                </div>
         </div>
     {% else %}
         <p>Нет доступных мероприятий.</p>
     {% endif %}
-
-    <a href="{% url 'new_event' %}" class="btn btn-primary">Добавить мероприятие</a>
+    {% if perms.core.add_event %}
+        <a href="{% url 'new_event' %}" class="btn btn-primary">Добавить мероприятие</a>
+    {% endif %}
 {% endblock %}

@@ -1,10 +1,12 @@
 {% load custom_filters %}
+{% if perms.core.add_eventuser %}
+    <div class="text-center">
 
-<div class="text-center">
-    <button type="button" class="btn btn-primary" onclick="openModal()">
-        Добавить сотрудника
-    </button>
-</div>
+        <button type="button" class="btn btn-primary" onclick="openModal()">
+            Добавить сотрудника
+        </button>
+    </div>
+{% endif %}
 {% if event_employees %}
     <h3>Участники</h3>
     <div class="list-group">

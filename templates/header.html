@@ -10,10 +10,13 @@
     </a>
 
     <ul class="nav nav-pills">
-        <li class="nav-item">
-            <a href="{% url 'organization' %}" class="nav-link {% if current_url == 'organization' %} active{% endif %}"
-               aria-current="page">Организация</a>
-        </li>
+        {% if perms.core.view_organization %}
+            <li class="nav-item">
+                <a href="{% url 'organization' %}"
+                   class="nav-link {% if current_url == 'organization' %} active{% endif %}"
+                   aria-current="page">Организация</a>
+            </li>
+        {% endif %}
         {% if perms.core.view_event %}
             <li class="nav-item">
                 <a href="{% url 'events' %}" class="nav-link {% if current_url == 'events' %} active{% endif %}"
