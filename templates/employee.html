@@ -5,7 +5,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <h2>Сотрудник</h2>
+                <h2 class="md-4">Сотрудник</h2>
                 {% if form %}
                     <form method="POST">
                         {% csrf_token %}
@@ -42,41 +42,74 @@
                     </form>
 
                 {% else %}
-                    <div class="form-group">
-                        <strong>Имя</strong>
-                        <p>{{ employee.first_name }}</p>
-                    </div>
-                    <div class="form-group">
-                        <strong>Фамилия</strong>
-                        <p>{{ employee.last_name }}</p>
-                    </div>
-                    <div class="form-group">
-                        <strong>Логин телеграм</strong>
-                        <p>{{ employee.username }}</p>
-                    </div>
-                    {% if perms.core.change_customuser %}
-                        <div class="mt-5">
-                            <!-- блоки кода, доступные только для редактирования -->
-                            <a href="{% url 'edit_employee' employee.id %}" class="btn btn-primary">Редактировать</a>
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h4 class="card-title">Имя: {{ employee.first_name }}</h4>
+                            <h4 class="card-title">Фамилия: {{ employee.last_name }}</h4>
+                            <h4 class="card-title">
+                                <i class="fab fa-telegram"></i>
+                                <a href="https://t.me/{{ employee.username }}" target="_blank"
+                                   class="text-decoration-none">{{ employee.username }}</a>
+                            </h4>
+                            <h4 class="card-title">
+                                <i class="far fa-envelope"></i>
+                                <a href="mailto:{{ employee.email }}"
+                                   class="text-decoration-none">{{ employee.email }}</a>
+                            </h4>
+                            {% if perms.core.change_customuser %}
+                                <div class="mt-4">
+                                    <a href="{% url 'edit_employee' employee.id %}" class="btn btn-primary">Редактировать</a>
+                                </div>
+                            {% endif %}
                         </div>
-                    {% endif %}
-
-                    <div class="mt-5">
-                        <h3>Участие в мероприятиях</h3>
-                        {% if employee.eventuser_set.count > 0 %}
-                            <ul>
-                                {% for event in employee.eventuser_set.all %}
-                                    <li>
-                                        <strong>{{ event.event }}</strong> <br/>
-                                        {% if event.event.photo %}
-                                            <img width="200" src="{{ event.event.photo.url }}"/>
-                                        {% endif %}
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        {% else %}
-                            <p>Сотрудник не участвовал в мероприятиях</p>
-                        {% endif %}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            {% if task_data.labels %}
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <h4 class="card-title">Статистика задач</h4>
+                                        <canvas id="taskChart"></canvas>
+                                        <script>
+                                            document.addEventListener('DOMContentLoaded', function () {
+                                                var taskData = {{ task_data|safe }};
+                                                createTaskChart(taskData);
+                                            });
+                                        </script>
+                                    </div>
+                                </div>
+                            {% elif task_data %}
+                                <div class="alert alert-info" role="alert">
+                                    У сотрудника еще не было задач
+                                </div>
+                            {% else %}
+                                <div class="alert alert-info" role="alert">
+                                    Диаграмма доступна только для сотрудников с группой "Исполняющий персонал"
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Участие в мероприятиях</h4>
+                                    {% if employee.eventuser_set.count > 0 %}
+                                        <ul class="list-group">
+                                            {% for event in employee.eventuser_set.all %}
+                                                <li class="list-group-item">
+                                                    <h5>{{ event.event.name }}</h5>
+                                                    {% if event.event.photo %}
+                                                        <img class="img-fluid" src="{{ event.event.photo.url }}"
+                                                             alt="{{ event.event.name }}">
+                                                    {% endif %}
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        <p>Сотрудник не участвовал в мероприятиях</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 {% endif %}
             </div>

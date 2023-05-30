@@ -27,7 +27,7 @@ def is_future(value):
 
 @register.filter
 def get_state_color(state_name):
-    if state_name == 'Готово':
+    if state_name == 'Выполнена':
         return 'bg-success'
     elif state_name == 'В процессе':
         return 'bg-info'

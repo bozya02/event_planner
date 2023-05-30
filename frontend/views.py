@@ -1,11 +1,12 @@
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from core.models import *
 from .forms import *
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import Group
+from django.db.models import Count
 
 
 def home(request):
@@ -141,7 +142,32 @@ def employee_view(request, employee_id):
     elif 'edit' in request.path and request.user.has_perm('core.change_customuser'):
         form = EmployeeForm(instance=employee)
 
-    return render(request, 'employee.html', {'employee': employee, 'form': form})
+    if employee.groups.filter(name='Исполняющий персонал').exists():
+        task_data = EventTask.objects.filter(event_user__user=employee).values('state__name').annotate(count=Count('id'))
+
+        labels = [state['state__name'] for state in task_data]
+        counts = [state['count'] for state in task_data]
+        colors = {
+            'В процессе': 'rgb(13, 202, 240)',
+            'Новая': 'rgb(255, 193, 7)',
+            'Выполнена': 'rgb(25, 135, 84)',
+            'Не выполнена': 'rgb(220, 53, 69)',
+        }
+
+        task_data = {
+            'labels': labels,
+            'datasets': [{
+                'label': 'Количество задач',
+                'data': counts,
+                'backgroundColor': [colors[state] for state in labels],
+                'borderColor': 'rgba(255, 255, 255, 1)',
+                'borderWidth': 1
+            }]
+        }
+    else:
+        task_data = None
+
+    return render(request, 'employee.html', {'employee': employee, 'form': form, 'task_data': task_data})
 
 
 @login_required
