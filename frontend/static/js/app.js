@@ -44,3 +44,17 @@ function generateRandomPassword() {
 function openModal() {
     $('#selectEmployeeModal').modal('show');
 }
+
+function createTaskChart(taskData) {
+    let ctx = document.getElementById('taskChart').getContext('2d');
+    let chart = new Chart(ctx, {
+        type: 'doughnut',
+        data: taskData,
+        options: {
+            responsive: true,
+            legend: {
+                position: 'right',
+            },
+        },
+    });
+}
