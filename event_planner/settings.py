@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'api',
     'core',
-    'frontend'
+    'frontend',
+    'bootstrap_datepicker_plus'
 ]
 
 MIDDLEWARE = [
@@ -116,7 +117,11 @@ LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'Europe/Moscow'
 
+DATETIME_FORMAT = 'd.m.Y H:i'
+
 USE_I18N = True
+
+USE_L10N = True
 
 USE_TZ = True
 
@@ -134,3 +139,27 @@ MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'core.CustomUser'
+
+BOOTSTRAP_DATEPICKER_PLUS = {
+    "options": {
+        "locale": "ru",
+        "showClose": True,
+        "showClear": True,
+        "showTodayButton": True,
+        "allowInputToggle": True,
+    },
+    "variant_options": {
+        "datetime": {
+            "format": "DD.MM.YYYY HH:mm",
+        },
+        "date": {
+            "format": "DD.MM.YYYY",
+        },
+    },
+    "addon_icon_classes": {
+        "month": "bi-calendar-month",
+    },
+}
+
+DATE_INPUT_FORMATS = ['%d.%m.%Y']
+DATETIME_INPUT_FORMATS = ['%d.%m.%Y %H:%M']

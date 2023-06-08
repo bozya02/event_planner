@@ -50,7 +50,8 @@ class CustomUserManager(UserManager):
 
 class CustomUser(AbstractUser):
     tg_id = models.CharField(max_length=30, verbose_name='Id Телеграм', blank=True, null=True)
-    organization = models.ForeignKey(Organization, blank=True, null=True,  on_delete=models.CASCADE, verbose_name='Организация')
+    organization = models.ForeignKey(Organization, blank=True, null=True, on_delete=models.CASCADE,
+                                     verbose_name='Организация')
     objects = CustomUserManager()
 
     def __str__(self):
@@ -70,7 +71,8 @@ class CustomUser(AbstractUser):
 
 class Event(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название')
-    organization = models.ForeignKey(Organization, blank=True, null=True, on_delete=models.CASCADE, verbose_name='Организация')
+    organization = models.ForeignKey(Organization, blank=True, null=True, on_delete=models.CASCADE,
+                                     verbose_name='Организация')
     description = models.TextField(max_length=16000, blank=True, null=True, verbose_name='Описание')
     location = models.CharField(max_length=200, blank=True, null=True, verbose_name='Место проведения')
     start_date = models.DateTimeField(verbose_name='Дата начала')
@@ -114,9 +116,11 @@ class EventTask(models.Model):
     description = models.TextField(max_length=16000, blank=True, null=True, verbose_name='Описание')
     event_user = models.ForeignKey(EventUser, on_delete=models.CASCADE, verbose_name='Сотрудник')
     state = models.ForeignKey(TaskState, on_delete=models.CASCADE, verbose_name='Статус')
+    photo = models.ImageField(upload_to=UniqueUploadName('images/event_tasks/'), blank=True,
+                              verbose_name='Изображение')
     start_date = models.DateTimeField(verbose_name='Дата начала')
     plan_end_date = models.DateTimeField(verbose_name='Плановая дата окончания')
-    actual_end_date = models.DateTimeField(verbose_name='Фактическая дата окончания')
+    actual_end_date = models.DateTimeField(blank=True, null=True, verbose_name='Фактическая дата окончания')
 
     def __str__(self):
         return f'{self.name} - {self.event_user}'

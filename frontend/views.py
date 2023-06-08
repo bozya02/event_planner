@@ -77,6 +77,7 @@ def event_view(request, event_id):
     if request.method == 'POST':
         if 'edit' in request.path and request.user.has_perm('core.change_event'):
             form = EventForm(request.POST, request.FILES, instance=event)
+            print(form.errors)
             if form.is_valid():
                 form.save()
                 return redirect('event', event_id=event.id)
@@ -98,6 +99,7 @@ def event_view(request, event_id):
 def new_event_view(request, event_id=None):
     if request.method == 'POST':
         form = EventForm(request.POST, request.FILES)
+        print(form.errors)
         if form.is_valid():
             event = form.save(commit=False)
             event.organization = request.user.organization
@@ -106,7 +108,7 @@ def new_event_view(request, event_id=None):
     else:
         form = EventForm()
 
-    return render(request, 'new_event.html', {'form': form })
+    return render(request, 'new_event.html', {'form': form})
 
 
 @login_required
@@ -145,7 +147,8 @@ def employee_view(request, employee_id):
         form = EmployeeForm(instance=employee)
 
     if employee.groups.filter(name='Исполняющий персонал').exists():
-        task_data = EventTask.objects.filter(event_user__user=employee).values('state__name').annotate(count=Count('id'))
+        task_data = EventTask.objects.filter(event_user__user=employee).values('state__name').annotate(
+            count=Count('id'))
 
         labels = [state['state__name'] for state in task_data]
         counts = [state['count'] for state in task_data]
@@ -211,7 +214,7 @@ def organization_view(request):
 
 
 @login_required
-def profile(request):
+def profile_view(request):
     user = request.user
     organization = user.organization
     is_director = user.groups.filter(name='Директор').exists()
@@ -260,9 +263,19 @@ def profile(request):
                    'organization_form': organization_form,
                    'is_director': is_director})
 
+
 @login_required
-def overview(request):
+def overview_view(request):
     organization = request.user.organization
     latest_event = Event.objects.filter(organization=organization).latest('start_date')
-    context = {'latest_event': latest_event}
+    if request.method == 'POST':
+        event_task_form = NewEventTaskForm(data=request.POST)
+        if event_task_form.is_valid():
+            event_task = event_task_form.save(commit=False)
+            event_task.save()
+            return redirect('overview')
+    else:
+        event_task_form = NewEventTaskForm()
+    event_tasks = EventTask.objects.filter(event_user__event=latest_event)
+    context = {'latest_event': latest_event, 'event_task_form': event_task_form, 'event_tasks': event_tasks}
     return render(request, 'overview.html', context)

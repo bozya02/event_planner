@@ -1,13 +1,22 @@
 .event-cards {
-  display: flex;
+    display: flex;
 }
 
 .event-card-img {
-  object-fit: cover;
-  height: 300px; /* Adjust the desired height of the images */
+    object-fit: cover;
+    height: 300px; /* Adjust the desired height of the images */
 }
 
 .no-bullets {
     list-style-type: none;
     padding-left: 0;
+}
+
+.info {
+    position: relative;
+}
+
+.icon {
+    color: var(--bs-primary);
+    opacity: 0.25;
 }
