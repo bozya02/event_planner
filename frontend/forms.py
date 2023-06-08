@@ -26,7 +26,7 @@ class OrganizationForm(forms.ModelForm):
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ['name', 'description', 'start_date', 'photo']
+        fields = ['name', 'description', 'location',  'start_date', 'end_date', 'photo']
         widgets = {
             'start_date': forms.DateTimeInput(attrs={'class': 'form-control datetimepicker'}),
         }

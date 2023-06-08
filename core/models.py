@@ -72,7 +72,9 @@ class Event(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название')
     organization = models.ForeignKey(Organization, blank=True, null=True, on_delete=models.CASCADE, verbose_name='Организация')
     description = models.TextField(max_length=16000, blank=True, null=True, verbose_name='Описание')
-    start_date = models.DateTimeField(verbose_name='Дата')
+    location = models.CharField(max_length=200, blank=True, null=True, verbose_name='Место проведения')
+    start_date = models.DateTimeField(verbose_name='Дата начала')
+    end_date = models.DateTimeField(verbose_name='Дата окончания')
     photo = models.ImageField(upload_to=UniqueUploadName('images/events/'), blank=True,
                               verbose_name='Изображение')
 
@@ -112,6 +114,9 @@ class EventTask(models.Model):
     description = models.TextField(max_length=16000, blank=True, null=True, verbose_name='Описание')
     event_user = models.ForeignKey(EventUser, on_delete=models.CASCADE, verbose_name='Сотрудник')
     state = models.ForeignKey(TaskState, on_delete=models.CASCADE, verbose_name='Статус')
+    start_date = models.DateTimeField(verbose_name='Дата начала')
+    plan_end_date = models.DateTimeField(verbose_name='Плановая дата окончания')
+    actual_end_date = models.DateTimeField(verbose_name='Фактическая дата окончания')
 
     def __str__(self):
         return f'{self.name} - {self.event_user}'

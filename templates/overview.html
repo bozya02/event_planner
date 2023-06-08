@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+    <h1>Обзор</h1>
+    <div class="container">
+        <div class="row event-cards">
+            {% if latest_event %}
+                <div class="card mb-4">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            {% if latest_event.photo %}
+                                <img src="{{ latest_event.photo.url }}" alt="{{ latest_event.name }}"
+                                     class="img-fluid">
+                            {% else %}
+                                <img src="{% static 'img/default_event_photo.jpg' %}" alt="{{ latest_event.name }}"
+                                     class="img-fluid">
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h2 class="card-title">Последнее мероприятие</h2>
+                                        <h3>{{ latest_event.name }}</h3>
+                                        <p class="card-text">{{ latest_event.description }}</p>
+                                        <p class="card-text">Дата: {{ latest_event.start_date }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h4>Список задач:</h4>
+                                        <ul class="list-group">
+                                            {% for task in latest_event.eventtask_set.all %}
+                                                <li class="list-group-item">{{ task.name }} - {{ task.status }}</li>
+                                            {% empty %}
+                                                <li class="list-group-item">Нет задач</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h4>Список сотрудников:</h4>
+                                        <ul class="list-group">
+                                            {% for employee in latest_event.eventuser_set.all %}
+                                                <li class="list-group-item">
+                                                    {{ employee.user }} -
+                                                    {{ employee|get_employee_status }}
+                                                </li>
+                                            {% empty %}
+                                                <li class="list-group-item">Нет сотрудников</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <p>Нет доступных мероприятий.</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

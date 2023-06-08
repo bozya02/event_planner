@@ -106,7 +106,7 @@ def new_event_view(request, event_id=None):
     else:
         form = EventForm()
 
-    return render(request, 'new_event.html', {'form': form})
+    return render(request, 'new_event.html', {'form': form })
 
 
 @login_required
@@ -259,3 +259,10 @@ def profile(request):
                    'organization': organization,
                    'organization_form': organization_form,
                    'is_director': is_director})
+
+@login_required
+def overview(request):
+    organization = request.user.organization
+    latest_event = Event.objects.filter(organization=organization).latest('start_date')
+    context = {'latest_event': latest_event}
+    return render(request, 'overview.html', context)
