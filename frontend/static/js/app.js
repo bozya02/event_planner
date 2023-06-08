@@ -40,10 +40,10 @@ function generateRandomPassword() {
     return password;
 }
 
-
-function openModal() {
-    $('#selectEmployeeModal').modal('show');
-}
+function openModal(modalId) {
+        // Устанавливаем текст задачи в содержимое модального окна
+        $('#' + modalId).modal('show');
+    }
 
 function createTaskChart(taskData) {
     let ctx = document.getElementById('taskChart').getContext('2d');
@@ -57,4 +57,14 @@ function createTaskChart(taskData) {
             },
         },
     });
+}
+
+function toggleTaskList(employeeId) {
+    var target = document.getElementById('tasks' + employeeId);
+    alert(target)
+    if (target.classList.contains('show')) {
+        target.classList.remove('show');
+    } else {
+        target.classList.add('show');
+    }
 }
