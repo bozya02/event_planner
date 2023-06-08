@@ -2,117 +2,116 @@
 {% load custom_filters %}
 
 {% block content %}
-    <div class="container">
+    <div class="container col-md-8">
         <div class="row justify-content-center">
-            <div class="col-md-8">
-                <h2 class="md-4">Сотрудник</h2>
-                {% if form %}
-                    <form method="POST">
-                        {% csrf_token %}
-                        {% for field in form.visible_fields %}
-                            {% if field.name == 'password' %}
-                                <div class="form-group" id="password_group" style="display: none">
-                            {% else %}
-                                <div class="form-group">
-                            {% endif %}
-
-                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                        {{ field|add_class:'form-control' }}
-                        {% if field.help_text %}
-                            <small class="form-text text-muted">{{ field.help_text }}</small>
+            <h2 class="md-4">Сотрудник</h2>
+            {% if form %}
+                <form method="POST">
+                    {% csrf_token %}
+                    {% for field in form.visible_fields %}
+                        {% if field.name == 'password' %}
+                            <div class="form-group" id="password_group" style="display: none">
+                        {% else %}
+                            <div class="form-group">
                         {% endif %}
-                        {% for error in field.errors %}
-                            <div class="alert alert-danger" role="alert">{{ error }}</div>
 
-                        {% endfor %}
-                        </div>
-                        {% endfor %}
-                        {{ form.password_changed }}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field|add_class:'form-control' }}
+                    {% if field.help_text %}
+                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error }}</div>
 
-                        <div class="mt-3">
-                            <button type="button" id="generate-password-btn" class="btn btn-secondary"
-                                    onclick="toggleGeneratePasswordButton(this,
+                    {% endfor %}
+                    </div>
+                    {% endfor %}
+                    {{ form.password_changed }}
+
+                    <div class="mt-3">
+                        <button type="button" id="generate-password-btn" class="btn btn-secondary"
+                                onclick="toggleGeneratePasswordButton(this,
                                 document.getElementById('password_group'),
                                 document.getElementById('id_password'),
                                 document.getElementById('id_password_changed'))">Сгенерировать
-                                пароль
-                            </button>
-                            <button class="btn btn-primary" type="submit">Сохранить</button>
-                        </div>
-                    </form>
-
-                {% else %}
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <h4 class="card-title">Имя: {{ employee.first_name }}</h4>
-                            <h4 class="card-title">Фамилия: {{ employee.last_name }}</h4>
-                            <h4 class="card-title">
-                                <i class="fab fa-telegram"></i>
-                                <a href="https://t.me/{{ employee.username }}" target="_blank"
-                                   class="text-decoration-none">{{ employee.username }}</a>
-                            </h4>
-                            <h4 class="card-title">
-                                <i class="far fa-envelope"></i>
-                                <a href="mailto:{{ employee.email }}"
-                                   class="text-decoration-none">{{ employee.email }}</a>
-                            </h4>
-                            {% if perms.core.change_customuser %}
-                                <div class="mt-4">
-                                    <a href="{% url 'edit_employee' employee.id %}" class="btn btn-primary">Редактировать</a>
-                                </div>
-                            {% endif %}
-                        </div>
+                            пароль
+                        </button>
+                        <button class="btn btn-primary" type="submit">Сохранить</button>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            {% if task_data.labels %}
-                                <div class="card mb-4">
-                                    <div class="card-body">
-                                        <h4 class="card-title">Статистика задач</h4>
-                                        <canvas id="taskChart"></canvas>
-                                        <script>
-                                            document.addEventListener('DOMContentLoaded', function () {
-                                                var taskData = {{ task_data|safe }};
-                                                createTaskChart(taskData);
-                                            });
-                                        </script>
-                                    </div>
-                                </div>
-                            {% elif task_data %}
-                                <div class="alert alert-info" role="alert">
-                                    У сотрудника еще не было задач
-                                </div>
-                            {% else %}
-                                <div class="alert alert-info" role="alert">
-                                    Диаграмма доступна только для сотрудников с группой "Исполняющий персонал"
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card">
+                </form>
+
+            {% else %}
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h4 class="card-title">Имя: {{ employee.first_name }}</h4>
+                        <h4 class="card-title">Фамилия: {{ employee.last_name }}</h4>
+                        <h4 class="card-title">
+                            <i class="fab fa-telegram"></i>
+                            <a href="https://t.me/{{ employee.username }}" target="_blank"
+                               class="text-decoration-none">{{ employee.username }}</a>
+                        </h4>
+                        <h4 class="card-title">
+                            <i class="far fa-envelope"></i>
+                            <a href="mailto:{{ employee.email }}"
+                               class="text-decoration-none">{{ employee.email }}</a>
+                        </h4>
+                        {% if perms.core.change_customuser %}
+                            <div class="mt-4">
+                                <a href="{% url 'edit_employee' employee.id %}"
+                                   class="btn btn-primary">Редактировать</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        {% if task_data.labels %}
+                            <div class="card mb-4">
                                 <div class="card-body">
-                                    <h4 class="card-title">Участие в мероприятиях</h4>
-                                    {% if employee.eventuser_set.count > 0 %}
-                                        <ul class="list-group">
-                                            {% for event in employee.eventuser_set.all %}
-                                                <li class="list-group-item">
-                                                    <h5>{{ event.event.name }}</h5>
-                                                    {% if event.event.photo %}
-                                                        <img class="img-fluid" src="{{ event.event.photo.url }}"
-                                                             alt="{{ event.event.name }}">
-                                                    {% endif %}
-                                                </li>
-                                            {% endfor %}
-                                        </ul>
-                                    {% else %}
-                                        <p>Сотрудник не участвовал в мероприятиях</p>
-                                    {% endif %}
+                                    <h4 class="card-title">Статистика задач</h4>
+                                    <canvas id="taskChart"></canvas>
+                                    <script>
+                                        document.addEventListener('DOMContentLoaded', function () {
+                                            var taskData = {{ task_data|safe }};
+                                            createTaskChart(taskData);
+                                        });
+                                    </script>
                                 </div>
+                            </div>
+                        {% elif task_data %}
+                            <div class="alert alert-info" role="alert">
+                                У сотрудника еще не было задач
+                            </div>
+                        {% else %}
+                            <div class="alert alert-info" role="alert">
+                                Диаграмма доступна только для сотрудников с группой "Исполняющий персонал"
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Участие в мероприятиях</h4>
+                                {% if employee.eventuser_set.count > 0 %}
+                                    <ul class="list-group">
+                                        {% for event in employee.eventuser_set.all %}
+                                            <li class="list-group-item">
+                                                <h5>{{ event.event.name }}</h5>
+                                                {% if event.event.photo %}
+                                                    <img class="img-fluid" src="{{ event.event.photo.url }}"
+                                                         alt="{{ event.event.name }}">
+                                                {% endif %}
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p>Сотрудник не участвовал в мероприятиях</p>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
-                {% endif %}
-            </div>
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

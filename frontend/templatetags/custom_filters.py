@@ -1,5 +1,6 @@
 import datetime
 
+import django.utils.timezone
 from django import template
 
 register = template.Library()
@@ -42,3 +43,8 @@ def get_state_color(state_name):
 @register.filter
 def tasks_count(event_tasks, state):
     return len(event_tasks.filter(state=state))
+
+
+@register.filter
+def is_event_actual(event):
+    return django.utils.timezone.now() < event.start_date

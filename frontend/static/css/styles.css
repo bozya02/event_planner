@@ -4,7 +4,7 @@
 
 .event-card-img {
   object-fit: cover;
-  height: 400px; /* Adjust the desired height of the images */
+  height: 300px; /* Adjust the desired height of the images */
 }
 
 .no-bullets {

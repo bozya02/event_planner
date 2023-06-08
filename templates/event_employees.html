@@ -1,7 +1,6 @@
 {% load custom_filters %}
-{% if perms.core.add_eventuser %}
+{% if perms.core.add_eventuser and event|is_event_actual %}
     <div class="text-center">
-
         <button type="button" class="btn btn-primary" onclick="openModal('selectEmployeeModal')">
             Добавить сотрудника
         </button>
@@ -19,24 +18,35 @@
                 <div class="d-flex justify-content-around">
                     <span class="badge bg-primary badge-pill mx-1">{{ event_employee.eventtask_set.count }}</span>
                     {% for state in task_states %}
-                        <span class="badge badge-pill
-                                {% with state.name|get_state_color as badge_class %}{{ badge_class }}{% endwith %} mx-1"
+                        <span class="badge badge-pill {{ state.name|get_state_color }} mx-1"
                               data-toggle="tooltip" data-placement="top" title="{{ state.name }}">
-                        {{ event_employee.eventtask_set|tasks_count:state }}
-                    </span>
+                            {{ event_employee.eventtask_set|tasks_count:state }}
+                        </span>
                     {% endfor %}
                 </div>
             </button>
-            <div class="collapse" id="tasks{{ event_employee.id }}">
-                <ul class="list-group">
+            <div class="collapse mx-2" id="tasks{{ event_employee.id }}">
+                <ul class="list-group list-group-flush">
                     {% for task in event_employee.eventtask_set.all %}
+                        <li class="list-group-item d-flex align-items-center list-group-item-action"
+                            style="cursor: pointer"
+                            onclick="openModal('taskInfoModal{{ task.id }}')">
+                            <span>
+                                {{ task.name }} - {{ task.status }}
+                            </span>
+                            <span class="badge badge-pill {{ task.state.name|get_state_color }}"
+                                  data-toggle="tooltip" data-placement="top" title="{{ task.state.name }}">
+                                {{ task.state.name }}
+                            </span>
+                        </li>
                         <div class="modal fade" id="taskInfoModal{{ task.id }}" tabindex="-1" role="dialog"
                              aria-labelledby="myModalLabel">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="myModalLabel">Задача</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close">
                                         </button>
                                     </div>
                                     <div class="modal-body">
@@ -49,13 +59,6 @@
                                 </div>
                             </div>
                         </div>
-                        <li class="list-group-item" onclick="openModal('taskInfoModal{{ task.id }}')">
-                            <span class="badge badge-pill
-                                {% with task.state.name|get_state_color as badge_class %}{{ badge_class }}{% endwith %} mx-1"
-                                  data-toggle="tooltip" data-placement="top" title="{{ state.name }}">
-                            {{ task.name }} - {{ task.status }}
-                            </span>
-                        </li>
                     {% empty %}
                         <li class="list-group-item">Нет задач</li>
                     {% endfor %}
@@ -64,7 +67,7 @@
         {% endfor %}
     </div>
 {% else %}
-    Нет участников
+    <p>Нет участников</p>
 {% endif %}
 
 <!-- Модальное окно для выбора сотрудника -->

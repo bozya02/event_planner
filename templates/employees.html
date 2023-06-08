@@ -16,12 +16,8 @@
             </thead>
             <tbody>
             {% for employee in employees %}
-                <tr>
-                    <td>
-                        <a href="{% url 'employee' employee.id %}" style="text-decoration: none">
-                            {{ employee.username }}
-                        </a>
-                    </td>
+                <tr onclick="window.location='{% url 'employee' employee.id %}'" style="cursor: pointer;">
+                    <td>{{ employee.username }}</td>
                     <td>{{ employee.email }}</td>
                     <td>{{ employee.groups.first.name }}</td>
                 </tr>

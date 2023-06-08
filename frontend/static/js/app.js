@@ -58,13 +58,3 @@ function createTaskChart(taskData) {
         },
     });
 }
-
-function toggleTaskList(employeeId) {
-    var target = document.getElementById('tasks' + employeeId);
-    alert(target)
-    if (target.classList.contains('show')) {
-        target.classList.remove('show');
-    } else {
-        target.classList.add('show');
-    }
-}
