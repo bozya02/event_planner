@@ -6,16 +6,17 @@ from rest_framework.authtoken.views import ObtainAuthToken
 # from rest_framework_simplejwt.authentication import JWTAuthentication
 # from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import generics
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .serializers import *
 from core.models import CustomUser, Event, EventUser, TaskState, EventTask, EventTaskReport
 
 
-class ObtainTokenByTgIdView(ObtainAuthToken):
+class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
 
-# class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+# class CustomTokenObtainPairView(TokenObtainPairSerializer):
 #     @classmethod
 #     def get_token(cls, user):
 #
@@ -28,9 +29,6 @@ class ObtainTokenByTgIdView(ObtainAuthToken):
 #
 #         token = super().get_token(user)
 #         return token
-
-
-
 
 class CustomUserRegistrationView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
