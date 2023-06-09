@@ -6,7 +6,7 @@
         </button>
     </div>
 {% endif %}
-{% if event_employees %}
+{% if event.eventuser_set %}
     <h3>Участники</h3>
     <div class="list-group">
         {% for event_employee in event.eventuser_set.all %}
