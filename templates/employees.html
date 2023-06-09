@@ -6,24 +6,26 @@
         <a href="{% url 'new_employee' %}" class="btn btn-primary">Добавить cотрудника</a>
     {% endif %}
     {% if employees %}
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>Имя пользователя</th>
-                <th>Email</th>
-                <th>Роль</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for employee in employees %}
-                <tr onclick="window.location='{% url 'employee' employee.id %}'" style="cursor: pointer;">
-                    <td>{{ employee.username }}</td>
-                    <td>{{ employee.email }}</td>
-                    <td>{{ employee.groups.first.name }}</td>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Имя пользователя</th>
+                    <th>Email</th>
+                    <th>Роль</th>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                {% for employee in employees %}
+                    <tr onclick="window.location='{% url 'employee' employee.id %}'" style="cursor: pointer;">
+                        <td>{{ employee.username }}</td>
+                        <td>{{ employee.email }}</td>
+                        <td>{{ employee.groups.first.name }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% else %}
         <p>В вашей организации нет сотрудников.</p>
     {% endif %}

@@ -26,7 +26,7 @@
                         <p>Дата окончания: {{ event.end_date }}</p>
                     </div>
                 </div>
-                {% if perms.view_eventuser %}
+                {% if perms.core.view_eventuser %}
                     <div class="col-md-4">
                         <h3>Список сотрудников</h3>
                         <ul class="list-group">
