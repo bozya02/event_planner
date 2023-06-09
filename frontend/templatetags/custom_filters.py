@@ -47,9 +47,6 @@ def tasks_count(event_tasks, state):
 
 @register.filter
 def get_employee_status(employee):
-    """
-    Возвращает статус сотрудника (свободен или занят) на основе выполнения его задач.
-    """
     if employee.eventtask_set.filter(state__name='Выполнена').count() == employee.eventtask_set.count():
         return 'Свободен'
     else:

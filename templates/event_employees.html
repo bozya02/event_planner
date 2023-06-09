@@ -9,7 +9,7 @@
 {% if event_employees %}
     <h3>Участники</h3>
     <div class="list-group">
-        {% for event_employee in event_employees %}
+        {% for event_employee in event.eventuser_set.all %}
             <button type="button"
                     class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
                     data-bs-toggle="collapse" data-bs-target="#tasks{{ event_employee.id }}"
@@ -25,44 +25,39 @@
                     {% endfor %}
                 </div>
             </button>
-            <div class="collapse mx-2" id="tasks{{ event_employee.id }}">
-                <ul class="list-group list-group-flush">
-                    {% for task in event_employee.eventtask_set.all %}
-                        <li class="list-group-item d-flex align-items-center list-group-item-action"
-                            style="cursor: pointer"
-                            onclick="openModal('taskInfoModal{{ task.id }}')">
-                            <span>
-                                {{ task.name }} - {{ task.status }}
-                            </span>
-                            <span class="badge badge-pill {{ task.state.name|get_state_color }}"
-                                  data-toggle="tooltip" data-placement="top" title="{{ task.state.name }}">
-                                {{ task.state.name }}
-                            </span>
-                        </li>
-                        <div class="modal fade" id="taskInfoModal{{ task.id }}" tabindex="-1" role="dialog"
-                             aria-labelledby="myModalLabel">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="myModalLabel">Задача</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close">
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <!-- Содержимое модального окна -->
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть
-                                        </button>
-                                    </div>
+            <div class="list-group list-group-flush collapse mx-2" id="tasks{{ event_employee.id }}">
+                {% for task in event_employee.eventtask_set.all %}
+                    <a class="list-group-item list-group-item-action d-flex align-items-center justify-content-between"
+                       style="cursor: pointer"
+                       onclick="openModal('taskInfoModal{{ task.id }}')">{{ task.name }}
+                        <span class="badge badge-pill {{ task.state.name|get_state_color }}"
+                              data-toggle="tooltip" data-placement="top"
+                              title="{{ task.state.name }}"> {{ task.state.name }}
+                        </span>
+                    </a>
+                    <div class="modal fade" id="taskInfoModal{{ task.id }}" tabindex="-1" role="dialog"
+                         aria-labelledby="myModalLabel">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="myModalLabel">Задача</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close">
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- Содержимое модального окна -->
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                    {% empty %}
-                        <li class="list-group-item">Нет задач</li>
-                    {% endfor %}
-                </ul>
+                    </div>
+                {% empty %}
+                    <a class="list-group-item">Нет задач</a>
+                {% endfor %}
             </div>
         {% endfor %}
     </div>

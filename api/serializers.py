@@ -8,11 +8,18 @@ from core.models import *
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
+        # Ваша логика получения токена по полю tg_id
+        # Здесь user - объект пользователя
+        tg_id = user.tg_id  # Замените на соответствующее поле
+
+        # Проверка наличия пользователя с указанным tg_id
+        try:
+            user = CustomUser.objects.get(tg_id=tg_id)
+        except CustomUser.DoesNotExist:
+            raise exceptions.AuthenticationFailed('Invalid tg_id')
+
+        # Создание и возвращение токена
         token = super().get_token(user)
-
-        # Добавьте дополнительные поля пользователя в полезную нагрузку токена (необязательно)
-        token['tg_id'] = user.tg_id
-
         return token
 
 

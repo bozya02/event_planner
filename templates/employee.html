@@ -93,17 +93,14 @@
                             <div class="card-body">
                                 <h4 class="card-title">Участие в мероприятиях</h4>
                                 {% if employee.eventuser_set.count > 0 %}
-                                    <ul class="list-group">
-                                        {% for event in employee.eventuser_set.all %}
-                                            <li class="list-group-item">
-                                                <h5>{{ event.event.name }}</h5>
-                                                {% if event.event.photo %}
-                                                    <img class="img-fluid" src="{{ event.event.photo.url }}"
-                                                         alt="{{ event.event.name }}">
-                                                {% endif %}
-                                            </li>
+                                    <div class="list-group">
+                                        {% for event_user in employee.eventuser_set.all %}
+                                            <a href="{% url 'event' event_user.event.id %}"
+                                               class="list-group-item list-group-item-action">
+                                                <h5>{{ event_user.event.name }}</h5>
+                                            </a>
                                         {% endfor %}
-                                    </ul>
+                                    </div>
                                 {% else %}
                                     <p>Сотрудник не участвовал в мероприятиях</p>
                                 {% endif %}

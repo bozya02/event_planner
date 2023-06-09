@@ -1,4 +1,5 @@
 from django import forms
+from django.conf.global_settings import DATETIME_INPUT_FORMATS
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm
 from django.utils import timezone
 
@@ -25,18 +26,17 @@ class OrganizationForm(forms.ModelForm):
 
 
 class EventForm(forms.ModelForm):
-    start_date = forms.DateField(label='Дата начала', initial=timezone.now(),
-                                 widget=DateTimePickerInput())
+    start_date = forms.DateTimeField(label='Дата начала', initial=timezone.now() + timezone.timedelta(days=1),
+                                     widget=DateTimePickerInput(options={'format': 'DD.MM.YYYY HH:mm'}),
+                                     input_formats=DATETIME_INPUT_FORMATS)
 
-    end_date = forms.DateField(label='Дата окончания', initial=timezone.now(),
-                               widget=DateTimePickerInput())
+    end_date = forms.DateTimeField(label='Дата начала', initial=timezone.now() + timezone.timedelta(days=1),
+                                   widget=DateTimePickerInput(options={'format': 'DD.MM.YYYY HH:mm'}),
+                                   input_formats=DATETIME_INPUT_FORMATS)
 
     class Meta:
         model = Event
         fields = ['name', 'description', 'location', 'start_date', 'end_date', 'photo']
-        widgets = {
-            'start_date': forms.DateTimeInput(attrs={'class': 'form-control datetimepicker'}),
-        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -59,10 +59,22 @@ class EmployeeForm(UserChangeForm):
 
 
 class NewEventTaskForm(forms.ModelForm):
-    start_date = forms.DateField(label='Дата начала', initial=timezone.now(), widget=DateTimePickerInput())
-    plan_end_date = forms.DateField(label='Планируемая дата окончания', initial=timezone.now(),
-                                    widget=DateTimePickerInput())
+    start_date = forms.DateTimeField(label='Дата начала', initial=timezone.now(),
+                                     widget=DateTimePickerInput(options={'format': 'DD.MM.YYYY HH:mm'}),
+                                     input_formats=DATETIME_INPUT_FORMATS)
+    plan_end_date = forms.DateTimeField(label='Дата начала', initial=timezone.now() + timezone.timedelta(days=1),
+                                        widget=DateTimePickerInput(options={'format': 'DD.MM.YYYY HH:mm'}),
+                                        input_formats=DATETIME_INPUT_FORMATS)
+
+    def format_event_user_label(self, event_user):
+        return f'{event_user.user.username} - {event_user.user.first_name} {event_user.user.last_name}'
 
     class Meta:
         model = EventTask
         fields = ['name', 'description', 'event_user', 'photo', 'start_date', 'plan_end_date']
+
+    def __init__(self, *args, **kwargs):
+        event = kwargs.pop('event')
+        super().__init__(*args, **kwargs)
+        self.fields['event_user'].queryset = EventUser.objects.filter(event=event)
+        self.fields['event_user'].label_from_instance = self.format_event_user_label

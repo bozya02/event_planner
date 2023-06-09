@@ -8,7 +8,7 @@ from core.models import *
 from .forms import *
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import Group
-from django.db.models import Count
+from django.db.models import Count, Q
 
 
 def home(request):
@@ -63,10 +63,15 @@ def events_view(request):
 @permission_required('core.view_event', raise_exception=True)
 def event_view(request, event_id):
     event = get_object_or_404(Event, id=event_id)
+
     event_employees = EventUser.objects.filter(event=event)
-    organization_employees = CustomUser.objects.filter(organization=request.user.organization).exclude(
+    organization_employees = CustomUser.objects.filter(
+        organization=request.user.organization,
+        groups__name='Исполняющий персонал'
+    ).exclude(
         id__in=event_employees.values_list('user__id', flat=True)
     )
+
     task_states = TaskState.objects.all()
 
     if event.organization != request.user.organization:
@@ -266,16 +271,52 @@ def profile_view(request):
 
 @login_required
 def overview_view(request):
+    user = request.user
     organization = request.user.organization
-    latest_event = Event.objects.filter(organization=organization).latest('start_date')
+
+    executing_staff_group = Group.objects.get(name='Исполняющий персонал')
+    task_manager_group = Group.objects.get(name='Менеджер по задачам')
+    is_executing_staff = executing_staff_group in user.groups.all()
+    is_task_manager = task_manager_group in user.groups.all()
+
+    current_time = timezone.now()
+
+    event_user_current = EventUser.objects.filter(user=user, event__start_date__lte=current_time).order_by(
+        '-event__start_date').first()
+    event_user_future = EventUser.objects.filter(user=user, event__start_date__gt=current_time).order_by(
+        'event__start_date').first()
+
+    responsible_tasks_current = Event.objects.filter(responsible_tasks=user, start_date__lte=current_time).order_by(
+        '-start_date').first()
+    responsible_tasks_future = Event.objects.filter(responsible_tasks=user, start_date__gt=current_time).order_by(
+        'start_date').first()
+
+    events = [event_user_current.event if event_user_current else None,
+              event_user_future.event if event_user_future else None,
+              responsible_tasks_current, responsible_tasks_future]
+    event = min([event for event in events if event],
+                key=lambda e: e.start_date if hasattr(e, 'start_date') else current_time)
+
+    if not (is_executing_staff or is_task_manager):
+        organization_current = Event.objects.filter(organization=organization, start_date__lte=current_time).order_by(
+            '-start_date').first()
+        organization_future = Event.objects.filter(organization=organization, start_date__gt=current_time).order_by(
+            'start_date').first()
+
+        event = organization_current or organization_future
+
     if request.method == 'POST':
-        event_task_form = NewEventTaskForm(data=request.POST)
+        event_task_form = NewEventTaskForm(data=request.POST, event=event)
         if event_task_form.is_valid():
             event_task = event_task_form.save(commit=False)
             event_task.save()
             return redirect('overview')
     else:
-        event_task_form = NewEventTaskForm()
-    event_tasks = EventTask.objects.filter(event_user__event=latest_event)
-    context = {'latest_event': latest_event, 'event_task_form': event_task_form, 'event_tasks': event_tasks}
+        event_task_form = NewEventTaskForm(event=event)
+
+    event_tasks = EventTask.objects.filter(event_user__event=event)
+    event_state = "Текущее" if event.start_date <= timezone.now() else "Предстоящее"
+
+    context = {'event': event, 'event_task_form': event_task_form, 'event_tasks': event_tasks,
+               'event_state': event_state}
     return render(request, 'overview.html', context)

@@ -113,17 +113,16 @@ REST_FRAMEWORK = {
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'ru-ru'
+LANGUAGE_CODE = 'ru-RU'
 
 TIME_ZONE = 'Europe/Moscow'
 
-DATETIME_FORMAT = 'd.m.Y H:i'
+DATETIME_FORMAT = 'j E Y H:i'
+DATE_FORMAT = 'j E Y'
 
 USE_I18N = True
 
 USE_L10N = True
-
-USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -140,26 +139,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'core.CustomUser'
 
-BOOTSTRAP_DATEPICKER_PLUS = {
-    "options": {
-        "locale": "ru",
-        "showClose": True,
-        "showClear": True,
-        "showTodayButton": True,
-        "allowInputToggle": True,
-    },
-    "variant_options": {
-        "datetime": {
-            "format": "DD.MM.YYYY HH:mm",
-        },
-        "date": {
-            "format": "DD.MM.YYYY",
-        },
-    },
-    "addon_icon_classes": {
-        "month": "bi-calendar-month",
-    },
-}
+DATETIME_INPUT_FORMATS = [
+    '%d.%m.%Y %H:%M',  # '01.01.2022 12:34'
+    '%d.%m.%Y %H:%M:%S',  # '01.01.2022 12:34:56'
+    '%d.%m.%Y',  # '01.01.2022'
+]
 
-DATE_INPUT_FORMATS = ['%d.%m.%Y']
-DATETIME_INPUT_FORMATS = ['%d.%m.%Y %H:%M']
+DATE_INPUT_FORMATS = [
+    '%d.%m.%Y',  # '01.01.2022'
+]

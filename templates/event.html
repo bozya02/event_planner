@@ -42,7 +42,7 @@
             </div>
             <div class="col-md-8">
                 <h2 class="mb-4">{{ event.name }}</h2>
-                <p>{{ event.description }}</p>
+                <p class="text-break">{{ event.description }}</p>
                 <p><strong>Старт:</strong> {{ event.start_date }}</p>
                 {% if perms.core.change_event and event.start_date|is_future %}
                     <div class="mt-3">

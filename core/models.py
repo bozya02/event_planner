@@ -79,6 +79,7 @@ class Event(models.Model):
     end_date = models.DateTimeField(verbose_name='Дата окончания')
     photo = models.ImageField(upload_to=UniqueUploadName('images/events/'), blank=True,
                               verbose_name='Изображение')
+    responsible_tasks = models.ManyToManyField(CustomUser, blank=True, verbose_name='Ответственные за задачи')
 
     def __str__(self):
         return self.name
@@ -115,7 +116,8 @@ class EventTask(models.Model):
     name = models.CharField(max_length=50, verbose_name='Название')
     description = models.TextField(max_length=16000, blank=True, null=True, verbose_name='Описание')
     event_user = models.ForeignKey(EventUser, on_delete=models.CASCADE, verbose_name='Сотрудник')
-    state = models.ForeignKey(TaskState, on_delete=models.CASCADE, verbose_name='Статус')
+    state = models.ForeignKey(TaskState, on_delete=models.CASCADE, verbose_name='Статус',
+                              default=TaskState.objects.get(name='Новая').pk)
     photo = models.ImageField(upload_to=UniqueUploadName('images/event_tasks/'), blank=True,
                               verbose_name='Изображение')
     start_date = models.DateTimeField(verbose_name='Дата начала')
