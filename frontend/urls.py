@@ -23,4 +23,5 @@ urlpatterns = [
     path('employees/<int:employee_id>/edit/', views.employee_view, name='edit_employee'),
     path('employees/new/', views.new_employee_view, name='new_employee'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+path('check_task/<int:task_id>', views.change_task_state, name='change_task_state'),
 ]

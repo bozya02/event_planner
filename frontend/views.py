@@ -321,7 +321,7 @@ def overview_view(request):
         if event_task_form.is_valid():
             event_task = event_task_form.save(commit=False)
             event_task.save()
-            send_task(event_task)
+            send_new_task(event_task)
             return redirect('overview')
     else:
         event_task_form = NewEventTaskForm(event=event)
@@ -337,3 +337,13 @@ def overview_view(request):
                'event_state': event_state
                }
     return render(request, 'overview.html', context)
+
+
+def change_task_state(request, task_id):
+    task = EventTask.objects.get(id=task_id)
+    state = request.POST.get('state')
+
+    task.state = TaskState.objects.get(name=state)
+    task.save()
+    send_task_result(task)
+    return JsonResponse({'status': 'ok'})

@@ -12,17 +12,32 @@ class LoginForm(AuthenticationForm):
         model = CustomUser
         fields = ['username', 'password']
 
+    def __int__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
+
 
 class RegistrationForm(UserCreationForm):
     class Meta:
         model = CustomUser
         fields = ['username', 'email', 'last_name', 'first_name', 'password1', 'password2']
 
+    def __int__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
+
 
 class OrganizationForm(forms.ModelForm):
     class Meta:
         model = Organization
         fields = ['name', 'description']
+
+    def __int__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
 
 
 class EventForm(forms.ModelForm):
@@ -40,13 +55,21 @@ class EventForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['start_date'].widget.attrs.update({'class': 'form-control datetimepicker'})
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
+        self.fields['start_date'].widget.attrs.update({'class': 'datetimepicker'})
+        self.fields['end_date'].widget.attrs.update({'class': 'datetimepicker'})
 
 
 class NewEmployeeForm(UserCreationForm):
     class Meta:
         model = CustomUser
         fields = ['first_name', 'last_name', 'email', 'username', 'groups']
+
+    def __int__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
 
 
 class EmployeeForm(UserChangeForm):
@@ -56,6 +79,11 @@ class EmployeeForm(UserChangeForm):
     class Meta:
         model = CustomUser
         fields = ['first_name', 'last_name', 'email', 'username', 'groups', 'password', 'password_changed']
+
+    def __int__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
 
 
 class NewEventTaskForm(forms.ModelForm):
@@ -80,3 +108,16 @@ class NewEventTaskForm(forms.ModelForm):
             visible.field.widget.attrs['class'] = 'form-control'
         self.fields['event_user'].queryset = EventUser.objects.filter(event=event)
         self.fields['event_user'].label_from_instance = self.format_event_user_label
+        self.fields['start_date'].widget.attrs.update({'class': 'datetimepicker'})
+        self.fields['plan_end_date'].widget.attrs.update({'class': 'datetimepicker'})
+
+
+class EventTaskStateForm(forms.ModelForm):
+    class Meta:
+        model = EventTask
+        fields = ['state']
+
+    def __int__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'

@@ -36,6 +36,8 @@ def get_state_color(state_name):
         return 'bg-warning'
     elif state_name == 'Не выполнена':
         return 'bg-danger'
+    elif state_name == 'Повтор':
+        return 'bg-secondary'
     else:
         return 'bg-secondary'
 

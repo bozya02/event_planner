@@ -100,6 +100,9 @@ class EventTaskReportViewSet(viewsets.ModelViewSet):
     queryset = EventTaskReport.objects.all()
     serializer_class = EventTaskReportSerializer
 
+    def perform_create(self, serializer):
+        serializer.save()
+
 
 class OrganizationViewSet(viewsets.ModelViewSet):
     queryset = Organization.objects.all()

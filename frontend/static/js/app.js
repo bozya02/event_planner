@@ -41,20 +41,30 @@ function generateRandomPassword() {
 }
 
 function openModal(modalId) {
-        // Устанавливаем текст задачи в содержимое модального окна
-        $('#' + modalId).modal('show');
-    }
+    // Устанавливаем текст задачи в содержимое модального окна
+    $('#' + modalId).modal('show');
+}
 
 function createTaskChart(taskData) {
     let ctx = document.getElementById('taskChart').getContext('2d');
     let chart = new Chart(ctx, {
-        type: 'doughnut',
-        data: taskData,
-        options: {
-            responsive: true,
-            legend: {
+        type: 'doughnut', data: taskData, options: {
+            responsive: true, legend: {
                 position: 'right',
             },
         },
+    });
+}
+
+function changeTaskState(taskId, state) {
+    $.ajax({
+        url: '/check_task/' + taskId, type: 'POST', data: {
+            'state': state,
+            'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+        }, success: function (response) {
+            location.reload();
+        }, error: function (xhr, status, error) {
+            console.error(xhr.responseText);
+        }
     });
 }

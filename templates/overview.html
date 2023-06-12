@@ -6,8 +6,8 @@
     <h2>Обзор</h2>
     <div class="container">
         {% if event %}
-            <div class="row">
-                <div class="col-md-{% if perms.core.view_eventuser %}4{% else %}6{% endif %}">
+            <div class="row align-items-center">
+                <div class="col-md-{% if perms.core.view_eventuser %}3{% else %}6{% endif %}">
                     <a href="{% url 'event' event.id %}">
                         {% if event.photo %}
                             <img src="{{ event.photo.url }}" alt="{{ event.name }}"
@@ -18,7 +18,7 @@
                         {% endif %}
                     </a>
                 </div>
-                <div class="col-md-{% if perms.core.view_eventuser %}4{% else %}6{% endif %}">
+                <div class="col-md-{% if perms.core.view_eventuser %}3{% else %}6{% endif %}">
                     <div class="text-center">
                         <h3>{{ event_state }}</h3>
                         <h3>{{ event.name }}</h3>
@@ -27,7 +27,7 @@
                     </div>
                 </div>
                 {% if perms.core.view_eventuser %}
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <h3>Список сотрудников</h3>
                         <ul class="list-group">
                             {% for employee in event.eventuser_set.all %}
@@ -111,6 +111,18 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
+                                            <h4>Детали задачи</h4>
+                                            <p>Название: {{ task.name }}</p>
+                                            <p>Описание: {% if task.description %}{{ task.description }}{% else %}Нет
+                                                описания{% endif %}</p>
+                                            <p>Дата начала: {% if task.start_date %}{{ task.start_date }}{% else %}Не
+                                                указана{% endif %}</p>
+                                            <p>Плановая дата окончания:
+                                                {% if task.plan_end_date %}{{ task.plan_end_date }}{% else %}Не
+                                                    указана{% endif %}</p>
+                                            <p>Фактическая дата окончания:
+                                                {% if task.actual_end_date %}{{ task.actual_end_date }}{% else %}Не
+                                                    указана{% endif %}</p>
                                             <h4>Отчеты</h4>
                                             <div class="card-deck">
                                                 {% for report in task.eventtaskreport_set.all %}
@@ -133,6 +145,18 @@
                                             </div>
                                         </div>
                                         <div class="modal-footer">
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-success"
+                                                        onclick="changeTaskState({{ task.id }}, 'Выполнена')">Выполнена
+                                                </button>
+                                                <button type="button" class="btn btn-warning"
+                                                        onclick="changeTaskState({{ task.id }}, 'Повтор')">Повтор
+                                                </button>
+                                                <button type="button" class="btn btn-danger"
+                                                        onclick="changeTaskState({{ task.id }}, 'Не выполнена')">Не
+                                                    выполнена
+                                                </button>
+                                            </div>
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                                 Закрыть
                                             </button>

@@ -1,3 +1,5 @@
 Django
 djangorestframework
+Requests
 rest_framework_simplejwt
+Pillow
