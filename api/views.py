@@ -100,7 +100,6 @@ class EventTaskViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if user.groups.filter(name='Исполняющий персонал').exists():
             current_time = timezone.now()
-            EventUser().eventtask_set.all()
             event_user_current = EventUser.objects.filter(user=user, event__start_date__lte=current_time,
                                                           event__end_date__gte=current_time).order_by(
                 '-event__start_date').first()

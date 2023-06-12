@@ -106,7 +106,7 @@ class EventTaskReportSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        task_id = validated_data.get('task_id')
+        task_id = validated_data.get('task')
         event_task = EventTask.objects.get(id=task_id)
         event_task.state = TaskState.objects.get(name='В процессе')
         event_task.save()
