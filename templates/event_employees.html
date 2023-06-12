@@ -5,7 +5,39 @@
             Добавить сотрудника
         </button>
     </div>
+    <!-- Модальное окно для выбора сотрудника -->
+    <div class="modal fade" id="selectEmployeeModal" tabindex="-1" role="dialog"
+         aria-labelledby="selectEmployeeModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="POST" action="{% url 'add_employees' event_id=event.id %}">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="selectEmployeeModalLabel">Выберите сотрудника</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="list-group">
+                            {% for employee in organization_employees %}
+                                <li class="list-group-item">
+                                    <input type="checkbox" name="employees" value="{{ employee.id }}"/>
+                                    {{ employee }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                        <button type="submit" class="btn btn-primary">Добавить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endif %}
+
 {% if event.eventuser_set %}
     <h3>Участники</h3>
     <div class="list-group">
@@ -40,13 +72,39 @@
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="myModalLabel">Задача</h5>
+                                    <h5 class="modal-title" id="myModalLabel">
+                                        {{ task.name }}
+                                        <span class="badge badge-pill {{ task.state.name|get_state_color }}"
+                                              data-toggle="tooltip" data-placement="top"
+                                              title="{{ task.state.name }}">
+                                            {{ task.state.name }}
+                                        </span>
+                                    </h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close">
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <!-- Содержимое модального окна -->
+                                    <h4>Отчеты</h4>
+                                    <div class="card-deck">
+                                        {% for report in task.eventtaskreport_set.all %}
+                                            <div class="card mb-3">
+                                                {% if report.photo %}
+                                                    <img src="{{ report.photo.url }}" alt="Отчет"
+                                                         class="card-img-top">
+                                                {% endif %}
+                                                <div class="card-body">
+                                                    <p class="card-text">{{ report.message }}</p>
+                                                </div>
+                                            </div>
+                                        {% empty %}
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <p class="card-text">Нет отчетов</p>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть
@@ -64,34 +122,3 @@
 {% else %}
     <p>Нет участников</p>
 {% endif %}
-
-<!-- Модальное окно для выбора сотрудника -->
-<div class="modal fade" id="selectEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="selectEmployeeModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <form method="POST" action="{% url 'add_employees' event_id=event.id %}">
-                {% csrf_token %}
-                <div class="modal-header">
-                    <h5 class="modal-title" id="selectEmployeeModalLabel">Выберите сотрудника</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <ul class="list-group">
-                        {% for employee in organization_employees %}
-                            <li class="list-group-item">
-                                <input type="checkbox" name="employees" value="{{ employee.id }}"/>
-                                {{ employee }}
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                    <button type="submit" class="btn btn-primary">Добавить</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>

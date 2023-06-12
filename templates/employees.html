@@ -11,6 +11,8 @@
                 <thead>
                 <tr>
                     <th>Имя пользователя</th>
+                    <th>Фамилия</th>
+                    <th>Имя</th>
                     <th>Email</th>
                     <th>Роль</th>
                 </tr>
@@ -19,6 +21,8 @@
                 {% for employee in employees %}
                     <tr onclick="window.location='{% url 'employee' employee.id %}'" style="cursor: pointer;">
                         <td>{{ employee.username }}</td>
+                        <td>{{ employee.last_name }}</td>
+                        <td>{{ employee.first_name }}</td>
                         <td>{{ employee.email }}</td>
                         <td>{{ employee.groups.first.name }}</td>
                     </tr>

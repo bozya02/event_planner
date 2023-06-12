@@ -21,7 +21,7 @@ def login_view(request):
         if login_form.is_valid():
             user = login_form.get_user()
             login(request, user)
-            return redirect('events')
+            return redirect('overview')
     else:
         login_form = LoginForm()
 
@@ -69,6 +69,12 @@ def event_view(request, event_id):
         id__in=event.eventuser_set.values_list('user__id', flat=True)
     )
 
+    responsible_tasks = event.organization.customuser_set.filter(
+        groups__name='Менеджер по задачам'
+    ).exclude(
+        id__in=event.responsible_tasks.values_list('id', flat=True)
+    )
+
     task_states = TaskState.objects.all()
 
     if event.organization != request.user.organization:
@@ -89,11 +95,18 @@ def event_view(request, event_id):
             for employee in employees:
                 EventUser.objects.create(event=event, user=employee)
             return redirect('event', event_id=event.id)
+        elif 'add_responsible' in request.path:
+            responsible_ids = request.POST.getlist('responsible')
+            responsibles = request.user.organization.customuser_set.filter(id__in=responsible_ids)
+            for responsible in responsibles:
+                event.responsible_tasks.add(responsible)
+            return redirect('event', event_id=event.id)
     elif 'edit' in request.path and request.user.has_perm('core.change_event'):
         form = EventForm(instance=event)
 
     return render(request, 'event.html', {'event': event, 'form': form,
                                           'organization_employees': organization_employees,
+                                          'responsible_tasks': responsible_tasks,
                                           'task_states': task_states})
 
 
@@ -273,42 +286,34 @@ def overview_view(request):
     organization = request.user.organization
 
     executing_staff_group = Group.objects.get(name='Исполняющий персонал')
-    task_manager_group = Group.objects.get(name='Менеджер по задачам')
     is_executing_staff = executing_staff_group in user.groups.all()
-    is_task_manager = task_manager_group in user.groups.all()
 
     current_time = timezone.now()
-    event_user_current = EventUser.objects.filter(user=user,
-                                                  event__start_date__lte=current_time,
+    event_user_current = EventUser.objects.filter(user=user, event__start_date__lte=current_time,
                                                   event__end_date__gte=current_time).order_by('-event__start_date') \
         .first()
-    event_user_future = EventUser.objects.filter(user=user,
-                                                 event__start_date__gt=current_time,
+    event_user_future = EventUser.objects.filter(user=user, event__start_date__gt=current_time,
                                                  event__end_date__gte=current_time).order_by('event__start_date') \
         .first()
 
     responsible_tasks_current = Event.objects.filter(responsible_tasks=user, start_date__lte=current_time,
                                                      end_date__gte=current_time).order_by('-start_date').first()
-    responsible_tasks_future = Event.objects.filter(responsible_tasks=user,
-                                                    start_date__gt=current_time,
+    responsible_tasks_future = Event.objects.filter(responsible_tasks=user, start_date__gt=current_time,
                                                     end_date__gte=current_time).order_by('start_date').first()
 
-    events = [event_user_current.event if event_user_current else None,
-              event_user_future.event if event_user_future else None,
-              responsible_tasks_current, responsible_tasks_future]
-    event = min([event for event in events if event],
-                key=lambda e: e.start_date if hasattr(e, 'start_date') else current_time) \
-        if events.count(None) != len(events) else None
+    organization_current = Event.objects.filter(organization=organization, start_date__lte=current_time,
+                                                end_date__gte=current_time).order_by('-start_date').first()
+    organization_future = Event.objects.filter(organization=organization, start_date__gt=current_time,
+                                               end_date__gte=current_time).order_by('start_date').first()
 
-    if not (is_executing_staff or is_task_manager):
-        organization_current = Event.objects.filter(organization=organization,
-                                                    start_date__lte=current_time,
-                                                    end_date__gte=current_time).order_by('-start_date').first()
-        organization_future = Event.objects.filter(organization=organization,
-                                                   start_date__gt=current_time,
-                                                   end_date__gte=current_time).order_by('start_date').first()
+    event_user = event_user_current or event_user_future
+    if event_user:
+        event_user = event_user.event
 
-        event = organization_current or organization_future
+    responsible_tasks = responsible_tasks_current or responsible_tasks_future
+    organization_event = organization_current or organization_future
+
+    event = organization_event or responsible_tasks or event_user
 
     if request.method == 'POST':
         event_task_form = NewEventTaskForm(data=request.POST, event=event)
@@ -319,9 +324,14 @@ def overview_view(request):
     else:
         event_task_form = NewEventTaskForm(event=event)
 
-    event_tasks = EventTask.objects.filter(event_user__event=event)
+    event_tasks = event_user.eventuser_set.filter(
+        user=user).first().eventtask_set.all() if is_executing_staff else EventTask.objects.filter(
+        event_user__event=event)
     event_state = ("Текущее" if event.start_date <= timezone.now() else "Предстоящее") if event else "Печаль"
 
-    context = {'event': event, 'event_task_form': event_task_form, 'event_tasks': event_tasks,
-               'event_state': event_state}
+    context = {'event': event,
+               'event_task_form': event_task_form,
+               'event_tasks': event_tasks,
+               'event_state': event_state
+               }
     return render(request, 'overview.html', context)
