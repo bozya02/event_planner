@@ -100,14 +100,15 @@ class EventTaskViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if user.groups.filter(name='Исполняющий персонал').exists():
             current_time = timezone.now()
+            EventUser().eventtask_set.all()
             event_user_current = EventUser.objects.filter(user=user, event__start_date__lte=current_time,
                                                           event__end_date__gte=current_time).order_by(
-                '-event__start_date')
+                '-event__start_date').first()
             event_user_future = EventUser.objects.filter(user=user, event__start_date__gt=current_time,
                                                          event__end_date__gte=current_time).order_by(
-                'event__start_date')
-            return event_user_current if len(event_user_current) > 0 else (
-                event_user_future if len(event_user_future) > 0 else [])
+                'event__start_date').first()
+            return event_user_current.eventtask_set.all() if event_user_current else (
+                event_user_future.eventtask_set.all() if event_user_future else [])
         return EventTask.objects.all()
 
     def perform_create(self, serializer):
