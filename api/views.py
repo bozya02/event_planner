@@ -91,6 +91,7 @@ class TaskStateViewSet(viewsets.ModelViewSet):
 
 
 class EventTaskViewSet(viewsets.ModelViewSet):
+    queryset = EventTask.objects.all()
     serializer_class = EventTaskSerializer
     permission_classes = [IsAuthenticated]
 
@@ -99,8 +100,6 @@ class EventTaskViewSet(viewsets.ModelViewSet):
         if user.groups.filter(name='Исполняющий персонал').exists():
             return EventTask.objects.filter(event_user__user=user)
         return EventTask.objects.all()
-
-    # Дополнительные методы, если требуется
 
     def perform_create(self, serializer):
         serializer.save()
