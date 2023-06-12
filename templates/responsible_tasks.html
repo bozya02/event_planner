@@ -1,0 +1,53 @@
+{% load custom_filters %}
+
+{% if perms.core.change_event and event|is_event_actual %}
+    <div class="text-center">
+        <button type="button" class="btn btn-primary" onclick="openModal('selectEmployeeModal')">
+            Добавить ответственного
+        </button>
+    </div>
+    <div class="modal fade" id="selectEmployeeModal" tabindex="-1" role="dialog"
+         aria-labelledby="selectEmployeeModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="POST" action="{% url 'add_responsible' event_id=event.id %}">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="selectEmployeeModalLabel">Выберите сотрудника</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="list-group">
+                            {% for responsible in responsible_tasks %}
+                                <li class="list-group-item">
+                                    <input type="checkbox" name="responsible" value="{{ responsible.id }}"/>
+                                    {{ responsible }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                        <button type="submit" class="btn btn-primary">Добавить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{% if event.eventuser_set %}
+    <h3>Ответственные</h3>
+    <ul class="list-group">
+        {% for responsible in event.responsible_tasks.all %}
+            <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                {{ responsible }}
+                <a href="{% url 'employee' responsible.id %}" class="btn btn-primary btn-sm">Профиль</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Нет ответственных</p>
+{% endif %}
