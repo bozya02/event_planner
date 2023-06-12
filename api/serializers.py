@@ -97,8 +97,6 @@ class EventTaskSerializer(serializers.ModelSerializer):
         model = EventTask
         fields = '__all__'
 
-    
-
 
 class EventTaskReportSerializer(serializers.ModelSerializer):
     class Meta:

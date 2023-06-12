@@ -76,5 +76,7 @@ class NewEventTaskForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         event = kwargs.pop('event')
         super().__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
         self.fields['event_user'].queryset = EventUser.objects.filter(event=event)
         self.fields['event_user'].label_from_instance = self.format_event_user_label

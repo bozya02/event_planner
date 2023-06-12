@@ -9,6 +9,7 @@ from .forms import *
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import Group
 from django.db.models import Count, Q
+from core.service import *
 
 
 def home(request):
@@ -316,10 +317,11 @@ def overview_view(request):
     event = organization_event or responsible_tasks or event_user
 
     if request.method == 'POST':
-        event_task_form = NewEventTaskForm(data=request.POST, event=event)
+        event_task_form = NewEventTaskForm(data=request.POST, event=event, files=request.FILES)
         if event_task_form.is_valid():
             event_task = event_task_form.save(commit=False)
             event_task.save()
+            send_task(event_task)
             return redirect('overview')
     else:
         event_task_form = NewEventTaskForm(event=event)

@@ -44,6 +44,7 @@ class TokenTgView(TokenObtainPairView):
 
         return Response({'token': str(token)}, status=status.HTTP_200_OK)
 
+
 # class CustomTokenObtainPairView(TokenObtainPairSerializer):
 #     @classmethod
 #     def get_token(cls, user):
