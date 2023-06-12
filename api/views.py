@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 from rest_framework import viewsets, status
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework_simplejwt.tokens import AccessToken
@@ -98,7 +99,15 @@ class EventTaskViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         if user.groups.filter(name='Исполняющий персонал').exists():
-            return EventTask.objects.filter(event_user__user=user)
+            current_time = timezone.now()
+            event_user_current = EventUser.objects.filter(user=user, event__start_date__lte=current_time,
+                                                          event__end_date__gte=current_time).order_by(
+                '-event__start_date')
+            event_user_future = EventUser.objects.filter(user=user, event__start_date__gt=current_time,
+                                                         event__end_date__gte=current_time).order_by(
+                'event__start_date')
+            return event_user_current if len(event_user_current) > 0 else (
+                event_user_future if len(event_user_future) > 0 else [])
         return EventTask.objects.all()
 
     def perform_create(self, serializer):
