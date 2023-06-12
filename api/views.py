@@ -1,4 +1,8 @@
-from rest_framework import viewsets
+from django.contrib.auth import get_user_model
+from rest_framework import viewsets, status
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.views import ObtainAuthToken
 # from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 # from rest_framework.permissions import IsAuthenticated
@@ -6,15 +10,39 @@ from rest_framework.authtoken.views import ObtainAuthToken
 # from rest_framework_simplejwt.authentication import JWTAuthentication
 # from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import generics
+from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .serializers import *
 from core.models import CustomUser, Event, EventUser, TaskState, EventTask, EventTaskReport
 
 
+@authentication_classes([])
+@permission_classes([])
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
+
+@authentication_classes([])
+@permission_classes([])
+class TokenTgView(TokenObtainPairView):
+    serializer_class = TgIdSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        tg_id = serializer.validated_data['tg_id']
+
+        User = get_user_model()
+        try:
+            user = User.objects.get(tg_id=tg_id)
+        except User.DoesNotExist:
+            return Response({'detail': 'Invalid tg_id.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        token = AccessToken.for_user(user)
+
+        return Response({'token': str(token)}, status=status.HTTP_200_OK)
 
 # class CustomTokenObtainPairView(TokenObtainPairSerializer):
 #     @classmethod
@@ -64,6 +92,7 @@ class TaskStateViewSet(viewsets.ModelViewSet):
 class EventTaskViewSet(viewsets.ModelViewSet):
     queryset = EventTask.objects.all()
     serializer_class = EventTaskSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class EventTaskReportViewSet(viewsets.ModelViewSet):

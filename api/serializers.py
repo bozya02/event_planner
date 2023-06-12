@@ -16,6 +16,10 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
 
+class TgIdSerializer(serializers.Serializer):
+    tg_id = serializers.CharField(required=True)
+
+
 class CustomUserReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
@@ -92,6 +96,8 @@ class EventTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = EventTask
         fields = '__all__'
+
+    
 
 
 class EventTaskReportSerializer(serializers.ModelSerializer):
