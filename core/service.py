@@ -21,7 +21,6 @@ def send_task_result(task: EventTask):
         'task': EventTaskSerializer(task).data
     }
 
-    print(data)
     response = requests.post(url=bot_url + 'task', json=data)
 
     return response.status_code
