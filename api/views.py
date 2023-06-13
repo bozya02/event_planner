@@ -106,8 +106,13 @@ class EventTaskViewSet(viewsets.ModelViewSet):
             event_user_future = EventUser.objects.filter(user=user, event__start_date__gt=current_time,
                                                          event__end_date__gte=current_time).order_by(
                 'event__start_date').first()
-            return event_user_current.eventtask_set.all() if event_user_current else (
-                event_user_future.eventtask_set.all() if event_user_future else [])
+
+            if event_user_current:
+                return event_user_current.eventtask_set.all()
+            elif event_user_future:
+                return event_user_future.eventtask_set.all()
+            else:
+                return EventTask.objects.none()
         return EventTask.objects.all()
 
     def perform_create(self, serializer):
@@ -122,6 +127,9 @@ class EventTaskReportViewSet(viewsets.ModelViewSet):
     serializer_class = EventTaskReportSerializer
 
     def perform_create(self, serializer):
+        serializer.save()
+
+    def perform_update(self, serializer):
         serializer.save()
 
 
