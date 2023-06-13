@@ -50,6 +50,7 @@
             <div class="col-md-8">
                 <h2 class="mb-4">{{ event.name }}</h2>
                 <p class="text-break">{{ event.description }}</p>
+                <p><strong>Место:</strong> {{ event.location }}</p>
                 <p><strong>Начало:</strong> {{ event.start_date }}</p>
                 <p><strong>Конец:</strong> {{ event.end_date }}</p>
                 {% if perms.core.change_event and event.start_date|is_future %}

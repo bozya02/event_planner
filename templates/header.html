@@ -21,12 +21,6 @@
                    aria-current="page">Мероприятия</a>
             </li>
         {% endif %}
-        {% if perms.core.view_eventtaskreport %}
-            <li class="nav-item">
-                <a href="{% url 'reports' %}"
-                   class="nav-link {% if current_url == 'reports' %} active{% endif %}">Отчеты</a>
-            </li>
-        {% endif %}
         {% if perms.core.view_customuser %}
             <li class="nav-item">
                 <a href="{% url 'employees' %}"

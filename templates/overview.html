@@ -159,7 +159,7 @@
                                             </div>
                                         </div>
                                         <div class="modal-footer">
-                                            {% if not task.actual_end_date and task|can_edit_task and perms.core.change_eventtask %}
+                                            {% if not task.actual_end_date and task|can_edit_task and perms.core.change_eventtask and responsible_tasks %}
                                                 <div class="btn-group">
                                                     <button type="button" class="btn btn-success"
                                                             onclick="changeTaskState({{ task.id }}, 'Выполнена')">
