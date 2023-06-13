@@ -71,6 +71,13 @@
                                             {% for field in event_task_form.visible_fields %}
                                                 <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                                                 {{ field }}
+                                                {% if field.errors %}
+                                                    <div class="alert alert-danger">
+                                                        {% for error in field.errors %}
+                                                            {{ error }}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% endif %}
                                             {% endfor %}
                                             <button type="submit" class="btn btn-primary mt-2">Добавить</button>
                                         </form>
@@ -78,6 +85,13 @@
                                 </div>
                             </div>
                         </div>
+                        {% if not event_task_form.is_valid and request.method == 'POST' %}
+                            <script>
+                                window.addEventListener('DOMContentLoaded', function () {
+                                    openModal('addTaskModal');
+                                });
+                            </script>
+                        {% endif %}
                     {% endif %}
                     <div class="list-group mt-3">
                         {% for task in event_tasks %}

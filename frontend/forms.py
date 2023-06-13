@@ -60,6 +60,19 @@ class EventForm(forms.ModelForm):
         self.fields['start_date'].widget.attrs.update({'class': 'form-control datetimepicker'})
         self.fields['end_date'].widget.attrs.update({'class': 'form-control datetimepicker'})
 
+    def clean(self):
+        cleaned_data = super().clean()
+        start_date = cleaned_data.get('start_date')
+        end_date = cleaned_data.get('end_date')
+
+        if start_date and start_date < timezone.now():
+            self.add_error('start_date', 'Дата начала должна быть не ранее текущего времени.')
+
+        if start_date and end_date and end_date < start_date:
+            self.add_error('end_date', 'Дата окончания должна быть не ранее даты начала.')
+
+        return cleaned_data
+
 
 class NewEmployeeForm(UserCreationForm):
     class Meta:
@@ -87,10 +100,10 @@ class EmployeeForm(UserChangeForm):
 
 
 class NewEventTaskForm(forms.ModelForm):
-    start_date = forms.DateTimeField(label='Дата начала', initial=timezone.now(),
+    start_date = forms.DateTimeField(label='Дата начала',
                                      widget=DateTimePickerInput(options={'format': 'DD.MM.YYYY HH:mm'}),
                                      input_formats=DATETIME_INPUT_FORMATS)
-    plan_end_date = forms.DateTimeField(label='Дата начала', initial=timezone.now() + timezone.timedelta(days=1),
+    plan_end_date = forms.DateTimeField(label='Дата начала',
                                         widget=DateTimePickerInput(options={'format': 'DD.MM.YYYY HH:mm'}),
                                         input_formats=DATETIME_INPUT_FORMATS)
 
@@ -108,8 +121,34 @@ class NewEventTaskForm(forms.ModelForm):
             visible.field.widget.attrs['class'] = 'form-control'
         self.fields['event_user'].queryset = EventUser.objects.filter(event=event)
         self.fields['event_user'].label_from_instance = self.format_event_user_label
+
+        if event:
+            self.fields['start_date'].initial = event.start_date + timezone.timedelta(minutes=1)
+            self.fields['plan_end_date'].initial = event.end_date - timezone.timedelta(minutes=1)
+
         self.fields['start_date'].widget.attrs.update({'class': 'form-control datetimepicker'})
         self.fields['plan_end_date'].widget.attrs.update({'class': 'form-control datetimepicker'})
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start_date = cleaned_data.get('start_date')
+        plan_end_date = cleaned_data.get('plan_end_date')
+        event = cleaned_data.get('event_user').event
+
+        if event:
+            print(start_date)
+            print(start_date)
+            print(start_date < event.start_date)
+            if start_date and start_date < event.start_date:
+                self.add_error('start_date', 'Дата начала не может быть раньше даты начала мероприятия.')
+
+            if plan_end_date and (plan_end_date > event.end_date):
+                self.add_error('plan_end_date',
+                               'Плановая дата окончания не может быть позже даты окончания мероприятия.')
+            if start_date and plan_end_date and start_date > plan_end_date:
+                self.add_error('plan_end_date',
+                               'Плановая дата окончания не может быть позже даты окончания мероприятия.')
+        return cleaned_data
 
 
 class EventTaskStateForm(forms.ModelForm):
