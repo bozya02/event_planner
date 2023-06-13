@@ -4,12 +4,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authtoken.views import ObtainAuthToken
-# from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-# from rest_framework.permissions import IsAuthenticated
-#
-# from rest_framework_simplejwt.authentication import JWTAuthentication
-# from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -136,3 +131,19 @@ class EventTaskReportViewSet(viewsets.ModelViewSet):
 class OrganizationViewSet(viewsets.ModelViewSet):
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
+
+
+class UpdateTgIdView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        tg_id = request.data.get('tg_id')
+
+        if not tg_id:
+            return Response({'detail': 'Missing tg_id'}, status=400)
+
+        user = request.user
+        user.tg_id = tg_id
+        user.save()
+
+        return Response({'detail': 'tg_id updated successfully'}, status=200)
