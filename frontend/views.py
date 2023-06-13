@@ -314,7 +314,9 @@ def overview_view(request):
     responsible_tasks = responsible_tasks_current or responsible_tasks_future
     organization_event = organization_current or organization_future
 
-    event = organization_event or responsible_tasks or event_user
+    print(organization_event)
+
+    event = responsible_tasks or event_user or organization_event
 
     if request.method == 'POST':
         event_task_form = NewEventTaskForm(data=request.POST, event=event, files=request.FILES)
@@ -332,6 +334,8 @@ def overview_view(request):
     event_state = ("Текущее" if event.start_date <= timezone.now() else "Предстоящее") if event else "Печаль"
 
     context = {'event': event,
+               'responsible_tasks': responsible_tasks,
+               'organization_event': organization_event,
                'event_task_form': event_task_form,
                'event_tasks': event_tasks,
                'event_state': event_state
@@ -344,6 +348,8 @@ def change_task_state(request, task_id):
     state = request.POST.get('state')
 
     task.state = TaskState.objects.get(name=state)
+    if state == 'Выполнена':
+        task.actual_end_date = timezone.now()
     task.save()
     send_task_result(task)
     return JsonResponse({'status': 'ok'})

@@ -58,3 +58,8 @@ def get_employee_status(employee):
 @register.filter
 def is_event_actual(event):
     return django.utils.timezone.now() < event.start_date
+
+
+@register.filter
+def can_edit_task(task):
+    return task.state.name != 'Выполнена' and task.state.name != "Не выполнена"

@@ -47,7 +47,7 @@
             <div class="row mt-2">
                 <div>
                     <h4>Список задач</h4>
-                    {% if perms.core.add_eventtask %}
+                    {% if perms.core.add_eventtask and responsible_tasks and organization_event %}
                         <button class="btn btn-primary" data-toggle="modal" onclick="openModal('addTaskModal')">Добавить
                             задачу
                         </button>
@@ -145,18 +145,21 @@
                                             </div>
                                         </div>
                                         <div class="modal-footer">
-                                            <div class="btn-group">
-                                                <button type="button" class="btn btn-success"
-                                                        onclick="changeTaskState({{ task.id }}, 'Выполнена')">Выполнена
-                                                </button>
-                                                <button type="button" class="btn btn-warning"
-                                                        onclick="changeTaskState({{ task.id }}, 'Повтор')">Повтор
-                                                </button>
-                                                <button type="button" class="btn btn-danger"
-                                                        onclick="changeTaskState({{ task.id }}, 'Не выполнена')">Не
-                                                    выполнена
-                                                </button>
-                                            </div>
+                                            {% if not task.actual_end_date and task|can_edit_task %}
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-success"
+                                                            onclick="changeTaskState({{ task.id }}, 'Выполнена')">
+                                                        Выполнена
+                                                    </button>
+                                                    <button type="button" class="btn btn-warning"
+                                                            onclick="changeTaskState({{ task.id }}, 'Повтор')">Повтор
+                                                    </button>
+                                                    <button type="button" class="btn btn-danger"
+                                                            onclick="changeTaskState({{ task.id }}, 'Не выполнена')">Не
+                                                        выполнена
+                                                    </button>
+                                                </div>
+                                            {% endif %}
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                                 Закрыть
                                             </button>
