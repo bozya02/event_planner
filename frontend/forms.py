@@ -57,8 +57,8 @@ class EventForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'form-control'
-        self.fields['start_date'].widget.attrs.update({'class': 'datetimepicker'})
-        self.fields['end_date'].widget.attrs.update({'class': 'datetimepicker'})
+        self.fields['start_date'].widget.attrs.update({'class': 'form-control datetimepicker'})
+        self.fields['end_date'].widget.attrs.update({'class': 'form-control datetimepicker'})
 
 
 class NewEmployeeForm(UserCreationForm):
@@ -108,8 +108,8 @@ class NewEventTaskForm(forms.ModelForm):
             visible.field.widget.attrs['class'] = 'form-control'
         self.fields['event_user'].queryset = EventUser.objects.filter(event=event)
         self.fields['event_user'].label_from_instance = self.format_event_user_label
-        self.fields['start_date'].widget.attrs.update({'class': 'datetimepicker'})
-        self.fields['plan_end_date'].widget.attrs.update({'class': 'datetimepicker'})
+        self.fields['start_date'].widget.attrs.update({'class': 'form-control datetimepicker'})
+        self.fields['plan_end_date'].widget.attrs.update({'class': 'form-control datetimepicker'})
 
 
 class EventTaskStateForm(forms.ModelForm):
