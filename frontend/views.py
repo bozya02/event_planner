@@ -314,9 +314,7 @@ def overview_view(request):
     responsible_tasks = responsible_tasks_current or responsible_tasks_future
     organization_event = organization_current or organization_future
 
-    print(organization_event)
-
-    event = responsible_tasks or event_user or organization_event
+    event = organization_event or responsible_tasks or event_user
 
     if request.method == 'POST':
         event_task_form = NewEventTaskForm(data=request.POST, event=event, files=request.FILES)
