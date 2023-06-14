@@ -45,7 +45,7 @@ class EventForm(forms.ModelForm):
                                      widget=DateTimePickerInput(options={'format': 'DD.MM.YYYY HH:mm'}),
                                      input_formats=DATETIME_INPUT_FORMATS)
 
-    end_date = forms.DateTimeField(label='Дата начала', initial=timezone.now() + timezone.timedelta(days=1),
+    end_date = forms.DateTimeField(label='Дата окончания', initial=timezone.now() + timezone.timedelta(days=1),
                                    widget=DateTimePickerInput(options={'format': 'DD.MM.YYYY HH:mm'}),
                                    input_formats=DATETIME_INPUT_FORMATS)
 
@@ -103,7 +103,7 @@ class NewEventTaskForm(forms.ModelForm):
     start_date = forms.DateTimeField(label='Дата начала',
                                      widget=DateTimePickerInput(options={'format': 'DD.MM.YYYY HH:mm'}),
                                      input_formats=DATETIME_INPUT_FORMATS)
-    plan_end_date = forms.DateTimeField(label='Дата начала',
+    plan_end_date = forms.DateTimeField(label='Планируемая дата окончания',
                                         widget=DateTimePickerInput(options={'format': 'DD.MM.YYYY HH:mm'}),
                                         input_formats=DATETIME_INPUT_FORMATS)
 

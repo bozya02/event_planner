@@ -2,8 +2,8 @@
 
 {% block content %}
     <h1>Список сотрудников</h1>
-    {% if perms.core.add_user %}
-        <a href="{% url 'new_employee' %}" class="btn btn-primary">Добавить cотрудника</a>
+    {% if perms.core.add_customuser %}
+        <a href="{% url 'new_employee' %}" class="btn btn-primary">Добавить сотрудника</a>
     {% endif %}
     {% if employees %}
         <div class="table-responsive">
