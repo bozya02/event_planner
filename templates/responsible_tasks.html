@@ -2,11 +2,11 @@
 
 {% if perms.core.change_event and event|is_event_actual %}
     <div class="text-center">
-        <button type="button" class="btn btn-primary" onclick="openModal('selectEmployeeModal')">
+        <button type="button" class="btn btn-primary" onclick="openModal('selectResponsibleModal')">
             Добавить ответственного
         </button>
     </div>
-    <div class="modal fade" id="selectEmployeeModal" tabindex="-1" role="dialog"
+    <div class="modal fade" id="selectResponsibleModal" tabindex="-1" role="dialog"
          aria-labelledby="selectEmployeeModalLabel"
          aria-hidden="true">
         <div class="modal-dialog" role="document">
