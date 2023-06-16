@@ -1,6 +1,7 @@
 from django import forms
 from django.conf.global_settings import DATETIME_INPUT_FORMATS
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm
+from django.contrib.auth.models import Group
 from django.utils import timezone
 
 from core.models import *
@@ -75,17 +76,33 @@ class EventForm(forms.ModelForm):
 
 
 class NewEmployeeForm(UserCreationForm):
+    groups = forms.ModelMultipleChoiceField(
+        queryset=Group.objects.exclude(name='Директор'),
+        label='Группы',
+        help_text='Группы, к которым принадлежит данный пользователь. Пользователь получит все права, указанные в каждой из его/её групп.")'
+    )
+
     class Meta:
         model = CustomUser
         fields = ['first_name', 'last_name', 'email', 'username', 'groups']
+        labels = {
+            'username': 'Имя пользователя (заполнить из Telegram)',
+        }
 
     def __int__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['groups'].queryset = Group.objects.exclude(name='Директор')
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'form-control'
 
 
 class EmployeeForm(UserChangeForm):
+    groups = forms.ModelMultipleChoiceField(
+        queryset=Group.objects.exclude(name='Директор'),
+        label='Группы',
+        help_text='Группы, к которым принадлежит данный пользователь. Пользователь получит все права, указанные в каждой из его/её групп.")'
+    )
+
     password = None
     password_changed = forms.BooleanField(widget=forms.HiddenInput(), required=False)
 

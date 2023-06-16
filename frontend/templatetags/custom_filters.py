@@ -63,3 +63,8 @@ def is_event_actual(event):
 @register.filter
 def can_edit_task(task):
     return task.state.name != 'Выполнена' and task.state.name != "Не выполнена"
+
+
+@register.filter
+def is_director(user):
+    return 'Директор' in user.groups.values_list('name', flat=True)

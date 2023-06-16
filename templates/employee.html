@@ -55,7 +55,7 @@
                             <a href="mailto:{{ employee.email }}"
                                class="text-decoration-none">{{ employee.email }}</a>
                         </h4>
-                        {% if perms.core.change_customuser %}
+                        {% if perms.core.change_customuser and not employee|is_director %}
                             <div class="mt-4">
                                 <a href="{% url 'edit_employee' employee.id %}"
                                    class="btn btn-primary">Редактировать</a>
