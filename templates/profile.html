@@ -65,8 +65,7 @@
             <p>{{ user.username }}</p>
         </div>
         {% if not is_director %}
-            <div class="mt-5">
-                <!-- блоки кода, доступные только для редактирования -->
+            <div class="mt-2">
                 <a href="{% url 'edit_profile' %}" class="btn btn-primary">Редактировать</a>
             </div>
         {% endif %}
