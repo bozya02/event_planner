@@ -85,6 +85,18 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
+                                    <h4>Детали задачи</h4>
+                                    <p>Название: {{ task.name }}</p>
+                                    <p>Описание: {% if task.description %}{{ task.description }}{% else %}Нет
+                                        описания{% endif %}</p>
+                                    <p>Дата начала: {% if task.start_date %}{{ task.start_date }}{% else %}Не
+                                        указана{% endif %}</p>
+                                    <p>Плановая дата окончания:
+                                        {% if task.plan_end_date %}{{ task.plan_end_date }}{% else %}Не
+                                            указана{% endif %}</p>
+                                    <p>Фактическая дата окончания:
+                                        {% if task.actual_end_date %}{{ task.actual_end_date }}{% else %}Не
+                                            указана{% endif %}</p>
                                     <h4>Отчеты</h4>
                                     <div class="card-deck">
                                         {% for report in task.eventtaskreport_set.all %}
