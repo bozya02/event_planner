@@ -10,7 +10,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def get_token(cls, user):
         token = super().get_token(user)
 
-        # Добавьте дополнительные поля пользователя в полезную нагрузку токена (необязательно)
         token['tg_id'] = user.tg_id
 
         return token
@@ -49,13 +48,10 @@ class CustomUserWriteSerializer(serializers.ModelSerializer):
         )
         group_names = validated_data.get('groups', [])
 
-        # Назначьте группы пользователю
         groups = Group.objects.filter(name__in=group_names)
         user.groups.set(groups)
 
         user.set_password(validated_data['password'])
-        user.is_staff = True
-
         user.save()
 
         return CustomUserTokenSerializer(user).data

@@ -41,34 +41,29 @@ class TokenTgView(TokenObtainPairView):
         return Response({'token': str(token)}, status=status.HTTP_200_OK)
 
 
-# class CustomTokenObtainPairView(TokenObtainPairSerializer):
-#     @classmethod
-#     def get_token(cls, user):
-#
-#         tg_id = user.tg_id
-#
-#         try:
-#             user = CustomUser.objects.get(tg_id=tg_id)
-#         except CustomUser.DoesNotExist:
-#             raise exceptions.AuthenticationFailed('Invalid tg_id')
-#
-#         token = super().get_token(user)
-#         return token
-
 class CustomUserRegistrationView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserWriteSerializer
 
 
 class CustomUserViewSet(viewsets.ModelViewSet):
-    # authentication_classes = [JWTAuthentication]
-    # permission_classes = [IsAuthenticated]
     queryset = CustomUser.objects.all()
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
             return CustomUserWriteSerializer
         return CustomUserReadSerializer
+
+
+class EventTaskReportViewSet(viewsets.ModelViewSet):
+    queryset = EventTaskReport.objects.all()
+    serializer_class = EventTaskReportSerializer
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+    def perform_update(self, serializer):
+        serializer.save()
 
 
 class EventViewSet(viewsets.ModelViewSet):
@@ -109,17 +104,6 @@ class EventTaskViewSet(viewsets.ModelViewSet):
             else:
                 return EventTask.objects.none()
         return EventTask.objects.all()
-
-    def perform_create(self, serializer):
-        serializer.save()
-
-    def perform_update(self, serializer):
-        serializer.save()
-
-
-class EventTaskReportViewSet(viewsets.ModelViewSet):
-    queryset = EventTaskReport.objects.all()
-    serializer_class = EventTaskReportSerializer
 
     def perform_create(self, serializer):
         serializer.save()
