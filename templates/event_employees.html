@@ -40,6 +40,51 @@
 
 {% if event.eventuser_set %}
     <h3>Исполняющий персонал</h3>
+    {% if perms.core.add_eventtask %}
+        <button class="btn btn-primary" data-toggle="modal" onclick="openModal('addTaskModal')">Добавить
+            задачу
+        </button>
+        <div class="modal fade" id="addTaskModal" tabindex="-1" role="dialog"
+             aria-labelledby="addTaskModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addTaskModalLabel">Добавление задачи</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close">
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{% url 'event_add_event_task' event_id=event.id %}" method="POST"
+                              enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ event_task_form.media }}
+                            {% for field in event_task_form.visible_fields %}
+                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.errors %}
+                                    <div class="alert alert-danger">
+                                        {% for error in field.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                            <button type="submit" class="btn btn-primary mt-2">Добавить</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if not event_task_form.is_valid and request.method == 'POST' %}
+            <script>
+                window.addEventListener('DOMContentLoaded', function () {
+                    openModal('addTaskModal');
+                });
+            </script>
+        {% endif %}
+    {% endif %}
     <div class="list-group">
         {% for event_employee in event.eventuser_set.all %}
             <button type="button"
