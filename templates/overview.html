@@ -34,8 +34,10 @@
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     {{ employee.user.username }} - {{ employee.user }}
                                     - {{ employee|get_employee_status }}
+                                    {% if perms.core.view_customuser %}
                                     <a href="{% url 'employee' employee.user.id %}"
                                        class="btn btn-primary btn-sm">Профиль</a>
+                                    {% endif %}
                                 </li>
                             {% empty %}
                                 <li class="list-group-item">Нет сотрудников</li>
@@ -47,11 +49,10 @@
             <div class="row mt-2">
                 <div>
                     <h4>Список задач</h4>
-                    {% if perms.core.add_eventtask and responsible_tasks and organization_event %}
+                    {% if perms.core.add_eventtask %}
                         <button class="btn btn-primary" data-toggle="modal" onclick="openModal('addTaskModal')">Добавить
                             задачу
                         </button>
-                        <!-- Модальное окно для добавления задачи -->
                         <div class="modal fade" id="addTaskModal" tabindex="-1" role="dialog"
                              aria-labelledby="addTaskModalLabel"
                              aria-hidden="true">
@@ -159,7 +160,7 @@
                                             </div>
                                         </div>
                                         <div class="modal-footer">
-                                            {% if not task.actual_end_date and task|can_edit_task and perms.core.change_eventtask and responsible_tasks %}
+                                            {% if not task.actual_end_date and task|can_edit_task and perms.core.change_eventtask %}
                                                 <div class="btn-group">
                                                     <button type="button" class="btn btn-success"
                                                             onclick="changeTaskState({{ task.id }}, 'Выполнена')">

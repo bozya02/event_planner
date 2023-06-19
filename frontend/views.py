@@ -290,32 +290,36 @@ def overview_view(request):
     executing_staff_group = Group.objects.get(name='Исполняющий персонал')
     is_executing_staff = executing_staff_group in user.groups.all()
 
+    responsible_tasks_group = Group.objects.get(name='Менеджер по задачам')
+    is_responsible_tasks = responsible_tasks_group in user.groups.all()
+
     current_time = timezone.now()
-    event_user_current = EventUser.objects.filter(user=user, event__start_date__lte=current_time,
-                                                  event__end_date__gte=current_time).order_by('-event__start_date') \
-        .first()
-    event_user_future = EventUser.objects.filter(user=user, event__start_date__gt=current_time,
-                                                 event__end_date__gte=current_time).order_by('event__start_date') \
-        .first()
 
-    responsible_tasks_current = Event.objects.filter(responsible_tasks=user, start_date__lte=current_time,
-                                                     end_date__gte=current_time).order_by('-start_date').first()
-    responsible_tasks_future = Event.objects.filter(responsible_tasks=user, start_date__gt=current_time,
-                                                    end_date__gte=current_time).order_by('start_date').first()
+    if is_executing_staff:
+        event_user_current = EventUser.objects.filter(user=user, event__start_date__lte=current_time,
+                                                      event__end_date__gte=current_time).order_by('-event__start_date') \
+            .first()
+        event_user_future = EventUser.objects.filter(user=user, event__start_date__gt=current_time,
+                                                     event__end_date__gte=current_time).order_by('event__start_date') \
+            .first()
 
-    organization_current = Event.objects.filter(organization=organization, start_date__lte=current_time,
-                                                end_date__gte=current_time).order_by('-start_date').first()
-    organization_future = Event.objects.filter(organization=organization, start_date__gt=current_time,
-                                               end_date__gte=current_time).order_by('start_date').first()
+        event_user = event_user_current or event_user_future
+        if event_user:
+            event = event_user.event
+    elif is_responsible_tasks:
+        responsible_tasks_current = Event.objects.filter(responsible_tasks=user, start_date__lte=current_time,
+                                                         end_date__gte=current_time).order_by('-start_date').first()
+        responsible_tasks_future = Event.objects.filter(responsible_tasks=user, start_date__gt=current_time,
+                                                        end_date__gte=current_time).order_by('start_date').first()
 
-    event_user = event_user_current or event_user_future
-    if event_user:
-        event_user = event_user.event
+        event = responsible_tasks_current or responsible_tasks_future
+    else:
+        organization_current = Event.objects.filter(organization=organization, start_date__lte=current_time,
+                                                    end_date__gte=current_time).order_by('-start_date').first()
+        organization_future = Event.objects.filter(organization=organization, start_date__gt=current_time,
+                                                   end_date__gte=current_time).order_by('start_date').first()
 
-    responsible_tasks = responsible_tasks_current or responsible_tasks_future
-    organization_event = organization_current or organization_future
-
-    event = organization_event or responsible_tasks or event_user
+        event = organization_current or organization_future
 
     if request.method == 'POST':
         event_task_form = NewEventTaskForm(data=request.POST, event=event, files=request.FILES)
@@ -333,8 +337,6 @@ def overview_view(request):
     event_state = ("Текущее" if event.start_date <= timezone.now() else "Предстоящее") if event else "Печаль"
 
     context = {'event': event,
-               'responsible_tasks': responsible_tasks,
-               'organization_event': organization_event,
                'event_task_form': event_task_form,
                'event_tasks': event_tasks,
                'event_state': event_state

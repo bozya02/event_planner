@@ -154,3 +154,5 @@ DATETIME_INPUT_FORMATS = [
 DATE_INPUT_FORMATS = [
     '%d.%m.%Y',  # '01.01.2022'
 ]
+
+CSRF_TRUSTED_ORIGINS = ['https://events.fvds.ru', 'https://bot.events.fvds.ru']
