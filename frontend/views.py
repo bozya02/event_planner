@@ -64,7 +64,6 @@ def events_view(request):
 @permission_required('core.view_event', raise_exception=True)
 def event_view(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-    event_task_form = NewEventTaskForm(event=event)
     organization_employees = event.organization.customuser_set.filter(
         groups__name='Исполняющий персонал'
     ).exclude(
@@ -103,20 +102,12 @@ def event_view(request, event_id):
             for responsible in responsibles:
                 event.responsible_tasks.add(responsible)
             return redirect('event', event_id=event.id)
-        elif 'add_event_task' in request.path:
-            event_task_form = NewEventTaskForm(data=request.POST, event=event, files=request.FILES)
-            if event_task_form.is_valid():
-                event_task = event_task_form.save(commit=False)
-                event_task.save()
-                send_new_task(event_task)
-                return redirect('event', event_id=event.id)
 
     elif 'edit' in request.path and request.user.has_perm('core.change_event'):
         form = EventForm(instance=event)
 
     return render(request, 'event.html', {'event': event,
                                           'form': form,
-                                          'event_task_form': event_task_form,
                                           'organization_employees': organization_employees,
                                           'responsible_tasks': responsible_tasks,
                                           'task_states': task_states})
