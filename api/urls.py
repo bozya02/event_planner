@@ -4,7 +4,6 @@ from .views import *
 
 router = routers.DefaultRouter()
 router.register(r'users', CustomUserViewSet)
-router.register(r'organizations', OrganizationViewSet)
 router.register(r'events', EventViewSet)
 router.register(r'task-states', TaskStateViewSet)
 router.register(r'event-tasks', EventTaskViewSet)

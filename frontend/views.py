@@ -333,8 +333,7 @@ def overview_view(request):
     else:
         event_task_form = NewEventTaskForm(event=event)
 
-    event_tasks = event_user.eventuser_set.filter(
-        user=user).first().eventtask_set.all() if is_executing_staff else EventTask.objects.filter(
+    event_tasks = event_user.eventtask_set.all() if is_executing_staff else EventTask.objects.filter(
         event_user__event=event)
     event_state = ("Текущее" if event.start_date <= timezone.now() else "Предстоящее") if event else "Печаль"
 
@@ -356,3 +355,7 @@ def change_task_state(request, task_id):
     task.save()
     send_task_result(task)
     return JsonResponse({'status': 'ok'})
+
+
+def policy_view(request):
+    return render(request, 'policy.html')

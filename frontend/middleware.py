@@ -8,6 +8,7 @@ class AuthorizationMiddleware:
     def __call__(self, request):
         if not request.user.is_authenticated \
            and not request.path == '/login/'\
+           and not request.path == '/policy/'\
            and not request.path == '/registration/' \
            and not request.path == '/'\
            and not request.path.startswith('/api/')\

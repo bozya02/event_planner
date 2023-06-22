@@ -20,6 +20,8 @@ class LoginForm(AuthenticationForm):
 
 
 class RegistrationForm(UserCreationForm):
+    personal_data_consent = forms.BooleanField(required=True, label='Согласие на обработку персональных данных')
+
     class Meta:
         model = CustomUser
         fields = ['username', 'email', 'last_name', 'first_name', 'password1', 'password2']
@@ -31,6 +33,9 @@ class RegistrationForm(UserCreationForm):
 
 
 class OrganizationForm(forms.ModelForm):
+    employee_data_consent = forms.BooleanField(required=True,
+                                               label='Согласие на обработку данных сотрудников организации')
+
     class Meta:
         model = Organization
         fields = ['name', 'description']
