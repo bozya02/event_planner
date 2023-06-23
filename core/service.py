@@ -4,7 +4,7 @@ from core.models import *
 from api.serializers import *
 import requests
 
-bot_url = 'https://8727-178-205-174-86.ngrok-free.app/'
+bot_url = 'https://bot.events.fvds.ru/'
 
 
 def send_new_task(task: EventTask):

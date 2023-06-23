@@ -4,34 +4,32 @@
 {% block content %}
     <h2>Список мероприятий</h2>
     {% if events %}
-        <div class="container">
-            <div class="row event-cards">
-                {% for event in events %}
-                    <div class="col-md-4">
-                        <a href="{% url 'event' event.id %}" style="text-decoration: none">
-                            <div class="card mb-4">
-                                {% if event.photo %}
-                                    <img src="{{ event.photo.url }}" alt="{{ event.name }}"
-                                         class="card-img-top event-card-img">
-                                {% else %}
-                                    <img src="{% static 'img/default_event_photo.jpg' %}" alt="{{ event.name }}"
-                                         class="card-img-top event-card-img">
-                                {% endif %}
+        <div class="row event-cards">
+            {% for event in events %}
+                <div class="col-md-4">
+                    <a href="{% url 'event' event.id %}" style="text-decoration: none">
+                        <div class="card mb-4">
+                            {% if event.photo %}
+                                <img src="{{ event.photo.url }}" alt="{{ event.name }}"
+                                     class="card-img-top event-card-img">
+                            {% else %}
+                                <img src="{% static 'img/default_event_photo.jpg' %}" alt="{{ event.name }}"
+                                     class="card-img-top event-card-img">
+                            {% endif %}
 
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ event.name }}</h5>
-                                    <p class="card-text"><small class="text-muted">{{ event.start_date }}</small></p>
-                                </div>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ event.name }}</h5>
+                                <p class="card-text"><small class="text-muted">{{ event.start_date }}</small></p>
                             </div>
-                        </a>
-                    </div>
-                    {% if forloop.counter|divisibleby:3 %}
                         </div>
-                        <div class="row event-cards">
-                    {% endif %}
-                {% endfor %}
+                    </a>
                 </div>
-        </div>
+                {% if forloop.counter|divisibleby:3 %}
+                    </div>
+                    <div class="row event-cards">
+                {% endif %}
+            {% endfor %}
+            </div>
     {% else %}
         <p>Нет доступных мероприятий.</p>
     {% endif %}
